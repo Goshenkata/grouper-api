@@ -67,6 +67,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public Optional<User> registerUser(RegistrationDTO registrationDTO) {
         User user = modelMapper.map(registrationDTO, User.class);
+        user.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
         if (userRepository.existsByUsername(user.getUsername())) {
             log.warn("user {} already exists", user.getUsername());
             return Optional.empty();

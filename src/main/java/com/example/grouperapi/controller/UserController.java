@@ -17,15 +17,20 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.io.IOException;
 import java.net.URI;
+import java.security.Principal;
 import java.util.*;
 
 import static com.example.grouperapi.filter.CustomAuthenticationFilter.REFRESH_TOKEN_EXPIRATION;
@@ -33,6 +38,9 @@ import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
+/**
+ * Controller for handling action related to users and refreshing JWT tokens
+ */
 @Controller
 @RequestMapping("/api/user/")
 @RequiredArgsConstructor
@@ -41,10 +49,18 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("register")
-    public ResponseEntity<Void> registerUser(RegistrationDTO registrationDTO) {
+    public ResponseEntity<List<String>> registerUser(@Valid @RequestBody RegistrationDTO registrationDTO,
+                                                 BindingResult bindingResult) {
+        List<String> errors = new ArrayList<>();
+        //check if any of the fields are invalid
+        bindingResult.getFieldErrors().stream().map(FieldError::getDefaultMessage).forEach(errors::add);
+        //check if the username is taken, and if not register the new user
         Optional<User> userOptional = userService.registerUser(registrationDTO);
         if (userOptional.isEmpty()) {
-            return ResponseEntity.badRequest().build();
+            errors.add("username " + registrationDTO.getUsername() + " is already taken");
+        }
+        if (!errors.isEmpty()) {
+            return ResponseEntity.badRequest().body(errors);
         }
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentContextPath()
@@ -94,7 +110,8 @@ public class UserController {
     }
 
     @GetMapping("test")
-    public ResponseEntity<String> test() {
+    public ResponseEntity<String> test(Principal principal) {
+        log.info("Principal name: " + principal.getName());
         return ResponseEntity.ok().body("test success");
     }
 }
