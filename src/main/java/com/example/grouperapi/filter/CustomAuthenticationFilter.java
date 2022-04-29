@@ -26,6 +26,9 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
+    public static final int REFRESH_TOKEN_EXPIRATION = 30 * 60 * 1000;
+    public static final int ACCESS_TOKEN_EXPRATION = 10 * 60 * 1000;
+
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
         String username = request.getParameter("username");
@@ -39,11 +42,12 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256("verysecretbtw".getBytes());
+        //longer refresh,
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
                 //1 minute expiration
                 //todo, expires quickly for testing, change refresh token lifetime to 60*60*1000, or 1 hour for new jwt token
-                .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPRATION))
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles",
                         user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
@@ -53,7 +57,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .withIssuer(request.getRequestURL().toString())
                 //2 minutes expiration
                 //todo, expires quickly for testing, change refresh token lifetime to 31*24*60*60*1000, or 1 month for re-authentication
-                .withExpiresAt(new Date(System.currentTimeMillis() + 30 * 60 * 1000))
+                .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
                 .withClaim("roles",
                         user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .sign(algorithm);

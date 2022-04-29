@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.net.URI;
 import java.util.*;
 
+import static com.example.grouperapi.filter.CustomAuthenticationFilter.REFRESH_TOKEN_EXPIRATION;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -67,7 +68,7 @@ public class UserController {
                 String accessToken = JWT.create()
                         .withSubject(user.getUsername())
                         //1 minute expiration
-                        .withExpiresAt(new Date(System.currentTimeMillis() + 10 * 60 * 1000))
+                        .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
                         .withIssuer(request.getRequestURL().toString())
                         .withClaim("roles",
                                 user.getRoles().stream().map(Role::getName).toList())
