@@ -49,19 +49,19 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("register")
-    public ResponseEntity<List<String>> registerUser(@Valid @RequestBody RegistrationDTO registrationDTO,
+    public ResponseEntity<String> registerUser(@Valid @RequestBody RegistrationDTO registrationDTO,
                                                  BindingResult bindingResult) {
-        List<String> errors = new ArrayList<>();
-        //check if any of the fields are invalid
-        bindingResult.getFieldErrors().stream().map(FieldError::getDefaultMessage).forEach(errors::add);
         //check if the username is taken, and if not register the new user
         Optional<User> userOptional = userService.registerUser(registrationDTO);
         if (userOptional.isEmpty()) {
-            errors.add("username " + registrationDTO.getUsername() + " is already taken");
+            return ResponseEntity.badRequest().body("username or email are already taken");
         }
-        if (!errors.isEmpty()) {
-            return ResponseEntity.badRequest().body(errors);
+
+        //check if any of the fields are invalid, fronend validation for this
+        if(bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body("bad input");
         }
+
         URI uri = URI.create(ServletUriComponentsBuilder
                 .fromCurrentContextPath()
                 .path("/api/user/register")

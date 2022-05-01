@@ -5,10 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.Size;
+import javax.validation.constraints.*;
 
 @Data @NoArgsConstructor @ToString @AllArgsConstructor
 public class RegistrationDTO {
@@ -28,4 +25,7 @@ public class RegistrationDTO {
             message = "Password must be between 8 and 32 characters," +
                     "must contain at least 1 capital letter, 1 digit and 1 non-alphanumeric character")
     private String password;
+    private String confirmPassword;
+    @AssertTrue(message = "user has not agreed to the terms of service")
+    Boolean hasAgreed;
 }

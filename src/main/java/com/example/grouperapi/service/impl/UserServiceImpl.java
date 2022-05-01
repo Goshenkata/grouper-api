@@ -48,8 +48,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     public void seedUsers() {
         if (userRepository.count() == 0) {
-            registerUser(new RegistrationDTO("user", "user@user.bg", passwordEncoder.encode("user")));
-            registerUser(new RegistrationDTO("user2", "user2@user.bg", passwordEncoder.encode("user2")));
+            registerUser(new RegistrationDTO("user", "user@user.bg", "user", "user", true));
+            registerUser(new RegistrationDTO("user2", "user2@user.bg", "user2", "user2", true));
             User admin = new User();
             admin.setUsername("admin");
             admin.setEmail("admin@admin.bg");
@@ -69,6 +69,10 @@ public class UserServiceImpl implements UserService, UserDetailsService {
         User user = modelMapper.map(registrationDTO, User.class);
         user.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
         if (userRepository.existsByUsername(user.getUsername())) {
+            log.warn("user {} already exists", user.getUsername());
+            return Optional.empty();
+        }
+        if (userRepository.existsByEmail(user.getEmail())) {
             log.warn("user {} already exists", user.getUsername());
             return Optional.empty();
         }
