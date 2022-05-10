@@ -80,7 +80,6 @@ public class UserController {
                 User user = userService.getUserByUsername(username);
                 String accessToken = JWT.create()
                         .withSubject(user.getUsername())
-                        //1 minute expiration
                         .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
                         .withIssuer(request.getRequestURL().toString())
                         .withClaim("roles",

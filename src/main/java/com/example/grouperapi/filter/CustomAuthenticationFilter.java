@@ -26,8 +26,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-    public static final int REFRESH_TOKEN_EXPIRATION = 30 * 60 * 1000;
-    public static final int ACCESS_TOKEN_EXPRATION = 10 * 60 * 1000;
+    public static final int REFRESH_TOKEN_EXPIRATION = 2 * 60 * 1000;
+    public static final int ACCESS_TOKEN_EXPRATION = 1 * 60 * 1000;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -42,7 +42,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256("verysecretbtw".getBytes());
-        //longer refresh,
+        //todo, expires quickly for testing, change refresh token lifetime to 60*60*1000, or 1 hour for new jwt token
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
                 //1 minute expiration
@@ -52,18 +52,21 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .withClaim("roles",
                         user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .sign(algorithm);
+        Date expiresAt = new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION);
         String refreshToken = JWT.create()
                 .withSubject(user.getUsername())
                 .withIssuer(request.getRequestURL().toString())
                 //2 minutes expiration
                 //todo, expires quickly for testing, change refresh token lifetime to 31*24*60*60*1000, or 1 month for re-authentication
-                .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
+                .withExpiresAt(expiresAt)
                 .withClaim("roles",
                         user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .sign(algorithm);
-        Map<String, String> tokens = new HashMap<>();
+        Map<String, Object> tokens = new HashMap<>();
         tokens.put("access_token", accessToken);
         tokens.put("refresh_token", refreshToken);
+        tokens.put("expires_at", expiresAt);
+        tokens.put("username", user.getUsername());
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }
