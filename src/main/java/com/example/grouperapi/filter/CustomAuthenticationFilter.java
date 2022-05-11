@@ -43,30 +43,30 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         User user = (User) authentication.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256("verysecretbtw".getBytes());
         //todo, expires quickly for testing, change refresh token lifetime to 60*60*1000, or 1 hour for new jwt token
+        Date accessTokenExpiration = new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPRATION);
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
                 //1 minute expiration
                 //todo, expires quickly for testing, change refresh token lifetime to 60*60*1000, or 1 hour for new jwt token
-                .withExpiresAt(new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPRATION))
+                .withExpiresAt(accessTokenExpiration)
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles",
                         user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .sign(algorithm);
-        Date expiresAt = new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION);
+        Date refreshTokenExpiration = new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION);
         String refreshToken = JWT.create()
                 .withSubject(user.getUsername())
                 .withIssuer(request.getRequestURL().toString())
                 //2 minutes expiration
                 //todo, expires quickly for testing, change refresh token lifetime to 31*24*60*60*1000, or 1 month for re-authentication
-                .withExpiresAt(expiresAt)
+                .withExpiresAt(refreshTokenExpiration)
                 .withClaim("roles",
                         user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())
                 .sign(algorithm);
         Map<String, Object> tokens = new HashMap<>();
         tokens.put("access_token", accessToken);
         tokens.put("refresh_token", refreshToken);
-        tokens.put("expires_at", expiresAt);
-        tokens.put("username", user.getUsername());
+        tokens.put("expires_at", accessTokenExpiration);
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }

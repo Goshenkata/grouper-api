@@ -30,6 +30,7 @@ import java.net.URI;
 import java.security.Principal;
 import java.util.*;
 
+import static com.example.grouperapi.filter.CustomAuthenticationFilter.ACCESS_TOKEN_EXPRATION;
 import static com.example.grouperapi.filter.CustomAuthenticationFilter.REFRESH_TOKEN_EXPIRATION;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
@@ -78,9 +79,10 @@ public class UserController {
                 DecodedJWT decodedJWT = verifier.verify(refreshToken);
                 String username = decodedJWT.getSubject();
                 User user = userService.getUserByUsername(username);
+                Date exp = new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPRATION);
                 String accessToken = JWT.create()
                         .withSubject(user.getUsername())
-                        .withExpiresAt(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION))
+                        .withExpiresAt(exp)
                         .withIssuer(request.getRequestURL().toString())
                         .withClaim("roles",
                                 user.getRoles().stream().map(Role::getName).toList())
@@ -89,6 +91,7 @@ public class UserController {
                 Map<String, String> tokens = new HashMap<>();
                 tokens.put("access_token", accessToken);
                 tokens.put("refresh_token", refreshToken);
+                tokens.put("expires_at", String.valueOf(exp.getTime()));
                 response.setContentType(APPLICATION_JSON_VALUE);
                 new ObjectMapper().writeValue(response.getOutputStream(), tokens);
             } catch (Exception e) {
