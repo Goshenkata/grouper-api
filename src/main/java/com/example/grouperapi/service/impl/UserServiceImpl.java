@@ -49,7 +49,9 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public void seedUsers() {
         if (userRepository.count() == 0) {
             registerUser(new RegistrationDTO("user", "user@user.bg", "user", "user", true));
-            registerUser(new RegistrationDTO("user2", "user2@user.bg", "user2", "user2", true));
+            for (int i = 0; i < 10; i++) {
+                registerUser(new RegistrationDTO("user" + i, "user@user.bg" + i, "user" + i, "user" + i, true));
+            }
             User admin = new User();
             admin.setUsername("admin");
             admin.setEmail("admin@admin.bg");
@@ -87,7 +89,8 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     public User getUserByUsername(String username) {
         return userRepository
                 .findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("username: " + username + " not found"));
+                .orElseThrow(() -> new UsernameNotFoundException("user with username: " + username + " not found"));
     }
+
 
 }

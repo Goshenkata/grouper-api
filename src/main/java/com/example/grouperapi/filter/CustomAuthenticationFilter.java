@@ -46,12 +46,10 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
         User user = (User) authentication.getPrincipal();
         Algorithm algorithm = Algorithm.HMAC256("verysecretbtw".getBytes());
-        //todo, expires quickly for testing, change refresh token lifetime to 60*60*1000, or 1 hour for new jwt token
         Date accessTokenExpiration = new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPRATION);
         String accessToken = JWT.create()
                 .withSubject(user.getUsername())
                 //1 minute expiration
-                //todo, expires quickly for testing, change refresh token lifetime to 60*60*1000, or 1 hour for new jwt token
                 .withExpiresAt(accessTokenExpiration)
                 .withIssuer(request.getRequestURL().toString())
                 .withClaim("roles",
@@ -62,7 +60,6 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
                 .withSubject(user.getUsername())
                 .withIssuer(request.getRequestURL().toString())
                 //2 minutes expiration
-                //todo, expires quickly for testing, change refresh token lifetime to 31*24*60*60*1000, or 1 month for re-authentication
                 .withExpiresAt(refreshTokenExpiration)
                 .withClaim("roles",
                         user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList())

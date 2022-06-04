@@ -72,7 +72,6 @@ public class UserController {
         String authorizationHeader = request.getHeader(AUTHORIZATION);
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             try {
-                //todo refactor this and the filters so less code is repeated
                 String refreshToken = authorizationHeader.substring("Bearer ".length());
                 Algorithm algorithm = Algorithm.HMAC256("verysecretbtw".getBytes());
                 JWTVerifier verifier = JWT.require(algorithm).build();

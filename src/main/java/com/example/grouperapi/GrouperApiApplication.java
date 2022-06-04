@@ -1,9 +1,6 @@
 package com.example.grouperapi;
 
-import com.example.grouperapi.service.GroupService;
-import com.example.grouperapi.service.PostService;
-import com.example.grouperapi.service.RoleService;
-import com.example.grouperapi.service.UserService;
+import com.example.grouperapi.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -19,6 +16,7 @@ public class GrouperApiApplication implements CommandLineRunner {
 	private final UserService userService;
 	private final RoleService roleService;
 	private final PostService postService;
+	private final CommentService commentService;
 
 	public static void main(String[] args) {
 		SpringApplication.run(GrouperApiApplication.class, args);
@@ -30,5 +28,6 @@ public class GrouperApiApplication implements CommandLineRunner {
 		userService.seedUsers();
 		groupService.seedGroups();
 		postService.seedPosts();
+		commentService.seedComments();
 	}
 }

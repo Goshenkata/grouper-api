@@ -15,4 +15,5 @@ public interface UserService {
     Optional<User> registerUser(RegistrationDTO registrationDTO);
 
     User getUserByUsername(String username);
+
 }
