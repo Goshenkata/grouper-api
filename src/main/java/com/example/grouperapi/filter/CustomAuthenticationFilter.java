@@ -26,8 +26,12 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 @RequiredArgsConstructor
 public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
     private final AuthenticationManager authenticationManager;
-    public static final int REFRESH_TOKEN_EXPIRATION = 2 * 60 * 1000;
-    public static final int ACCESS_TOKEN_EXPRATION = 1 * 60 * 1000;
+
+    //6 month expiration, after which new login is required
+    public static final long REFRESH_TOKEN_EXPIRATION = 15778800000L;
+
+    //1 week expiration, after which the token is refreshed
+    public static final long ACCESS_TOKEN_EXPRATION = 604800000L;
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
@@ -67,6 +71,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         tokens.put("access_token", accessToken);
         tokens.put("refresh_token", refreshToken);
         tokens.put("expires_at", accessTokenExpiration);
+        tokens.put("username", request.getParameter("username"));
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);
     }

@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.List;
 
 @Entity
 @Data
@@ -22,4 +23,8 @@ public class User {
     private String password;
     @ManyToMany
     Collection<Role> roles;
+    @OneToMany(mappedBy = "author")
+    List<Post> posts;
+    @ManyToMany(mappedBy = "members")
+    List<GroupEntity> groups;
 }
