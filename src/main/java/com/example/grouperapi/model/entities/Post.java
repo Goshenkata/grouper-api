@@ -19,14 +19,19 @@ public class Post {
     private Long id;
     @Enumerated(EnumType.STRING)
     private PostType postType;
-    @Column
+    @Column(nullable = false)
     private Instant  created;
     @ManyToOne
     private User author;
     @Column(nullable = false)
     String title;
-    @Column(nullable = false)
+    @Column
+    private String imageUrl;
+    @Lob
+    @Column
     String content;
+    @Column(nullable = false)
+    Integer commentCount;
     @OneToMany(mappedBy = "post")
     private List<PostComment> comments;
     @ManyToOne

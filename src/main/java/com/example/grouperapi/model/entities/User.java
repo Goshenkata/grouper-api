@@ -27,4 +27,6 @@ public class User {
     List<Post> posts;
     @ManyToMany(mappedBy = "members")
     List<GroupEntity> groups;
+    @Column
+    private String pfpUrl;
 }

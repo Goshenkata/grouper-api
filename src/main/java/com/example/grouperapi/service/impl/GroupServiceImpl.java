@@ -8,11 +8,13 @@ import com.example.grouperapi.service.GroupService;
 import com.example.grouperapi.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
+@Service
 public class GroupServiceImpl implements GroupService {
 
     private final GroupRepository groupRepository;
@@ -20,26 +22,28 @@ public class GroupServiceImpl implements GroupService {
 
     @Override
     public void seedGroups() {
-        List<User> members = List.of(
-                userService.getUserByUsername("user"),
-                userService.getUserByUsername("user2")
-        );
-        createGroup("bulgaria", members);
-        createGroup("linux", members);
-        createGroup("programming", members);
-        createGroup("politics", members);
-        createGroup("news", members);
-        createGroup("europe", members);
-        createGroup("conversation", members);
-        createGroup("random", members);
-        createGroup("memes", members);
-        createGroup("cats", members);
+        if (groupRepository.count() == 0) {
+            List<User> members = List.of(
+                    userService.getUserByUsername("user"),
+                    userService.getUserByUsername("user2")
+            );
+            createGroup("bulgaria", members);
+            createGroup("linux", members);
+            createGroup("programming", members);
+            createGroup("politics", members);
+            createGroup("news", members);
+            createGroup("europe", members);
+            createGroup("conversation", members);
+            createGroup("random", members);
+            createGroup("memes", members);
+            createGroup("cats", members);
+        }
     }
 
     @Override
     public GroupEntity getGroupByName(String name) {
         return groupRepository.findByName(name)
-                .orElseThrow(() -> new UsernameNotFoundException("Group with name \"" + name  +"\" not found in the database"));
+                .orElseThrow(() -> new UsernameNotFoundException("Group with name \"" + name + "\" not found in the database"));
     }
 
 

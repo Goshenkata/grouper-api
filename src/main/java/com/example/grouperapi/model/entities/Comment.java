@@ -9,8 +9,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Data
-@NoArgsConstructor
-@MappedSuperclass
+@NoArgsConstructor @Entity
 public abstract class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,8 +18,9 @@ public abstract class Comment {
     private User author;
     @Column(nullable = false)
     private Instant created;
+    @Lob
     @Column(nullable = false)
     String contents;
-    @OneToMany
+    @OneToMany(cascade = CascadeType.ALL)
     private List<Reply> replies;
 }
