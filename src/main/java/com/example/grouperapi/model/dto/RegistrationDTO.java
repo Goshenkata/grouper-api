@@ -6,9 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import javax.validation.constraints.*;
+import java.io.Serializable;
 
 @Data @NoArgsConstructor @ToString @AllArgsConstructor
-public class RegistrationDTO {
+public class RegistrationDTO implements Serializable {
     @NotNull(message = "username can't be null")
     @Size(min = 3, max = 32, message = "username must be between 3 and 32 characters long")
     private String username;

@@ -112,8 +112,8 @@ is widely used among developers working in that language.
 than the work as a whole, that (a) is included in the normal form of
 packaging a Major Component, but which is not part of that Major
 Component, and (b) serves only to enable use of the work with that
-Major Component, or to implement a Standard Interface for which an
-implementation is available to the public in source code form.  A
+Major Component, or to ement a Standard Interface for which an
+ementation is available to the public in source code form.  A
 "Major Component", in this context, means a major essential component
 (kernel, window system, and so on) of the specific operating system
 (if any) on which the executable work runs, or a compiler used to
@@ -324,7 +324,7 @@ protocols for communication across the network.
 
   Corresponding Source conveyed, and Installation Information provided,
 in accord with this section must be in a format that is publicly
-documented (and with an implementation available to the public in
+documented (and with an ementation available to the public in
 source code form), and must require no special password or key for
 unpacking, reading or copying.
 
@@ -522,7 +522,7 @@ contain the covered work, unless you entered into that arrangement,
 or that patent license was granted, prior to 28 March 2007.
 
   Nothing in this License shall be construed as excluding or limiting
-any implied license or other defenses to infringement that may
+any ied license or other defenses to infringement that may
 otherwise be available to you under applicable patent law.
 
   12. No Surrender of Others' Freedom.
@@ -589,8 +589,8 @@ later version.
   THERE IS NO WARRANTY FOR THE PROGRAM, TO THE EXTENT PERMITTED BY
 APPLICABLE LAW.  EXCEPT WHEN OTHERWISE STATED IN WRITING THE COPYRIGHT
 HOLDERS AND/OR OTHER PARTIES PROVIDE THE PROGRAM "AS IS" WITHOUT WARRANTY
-OF ANY KIND, EITHER EXPRESSED OR IMPLIED, INCLUDING, BUT NOT LIMITED TO,
-THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
+OF ANY KIND, EITHER EXPRESSED OR IED, INCLUDING, BUT NOT LIMITED TO,
+THE IED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR
 PURPOSE.  THE ENTIRE RISK AS TO THE QUALITY AND PERFORMANCE OF THE PROGRAM
 IS WITH YOU.  SHOULD THE PROGRAM PROVE DEFECTIVE, YOU ASSUME THE COST OF
 ALL NECESSARY SERVICING, REPAIR OR CORRECTION.
@@ -638,7 +638,7 @@ the "copyright" line and a pointer to where the full notice is found.
     (at your option) any later version.
 
     This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    but WITHOUT ANY WARRANTY; without even the ied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU Affero General Public License for more details.
 

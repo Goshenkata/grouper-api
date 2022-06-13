@@ -25,8 +25,8 @@ public class Post {
     private User author;
     @Column(nullable = false)
     String title;
-    @Column
-    private String imageUrl;
+    @OneToOne
+    private Image image;
     @Lob
     @Column
     String content;
