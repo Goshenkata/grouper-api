@@ -12,8 +12,6 @@ public class Image {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column
-    private String title;
     @Column(nullable = false)
     private String url;
     @Column

@@ -3,8 +3,10 @@ package com.example.grouperapi.service;
 import com.example.grouperapi.model.dto.FullPostInfoDTO;
 import com.example.grouperapi.model.dto.PostCreationDTO;
 import com.example.grouperapi.model.dto.PostFeedDTO;
+import com.example.grouperapi.model.entities.Image;
 import com.example.grouperapi.model.entities.Post;
 import com.example.grouperapi.model.entities.enums.PostType;
+import com.example.grouperapi.repositories.ImageRepository;
 import com.example.grouperapi.repositories.PostRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +14,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -25,6 +28,7 @@ public class PostService {
 
     private PostRepository postRepository;
     private UserService userService;
+    private ImageRepository imageRepository;
     private GroupService groupService;
     private CloudinaryService cloudinaryService;
     private ModelMapper mapper;
@@ -269,6 +273,7 @@ public class PostService {
                 .toList();
     }
 
+    @Transactional
     public Long createPost(PostCreationDTO dto, String username) throws IOException {
         Post post = new Post();
         post.setPostType(dto.getImage().isEmpty() ? PostType.TEXT : PostType.IMAGE);
@@ -280,8 +285,10 @@ public class PostService {
         post.setAuthor(userService.getUserByUsername(username));
         post.setCreated(Instant.now());
 
-        String imageUrl = cloudinaryService.postImage(dto.getImage());
+        Image image = cloudinaryService.postImage(dto.getImage());
+        post.setImage(image);
 
+        imageRepository.save(image);
         Post save = postRepository.save(post);
         return save.getId();
     }
