@@ -46,7 +46,7 @@ public class UserService implements UserDetailsService {
         if (userRepository.count() == 0) {
             registerUser(new RegistrationDTO("user", "user@user.bg", "user", "user", true));
             for (int i = 0; i < 10; i++) {
-                registerUser(new RegistrationDTO("user" + i, "user@user.bg" + i, "user" + i, "user" + i, true));
+                registerUser(new RegistrationDTO("user" + i, "user@user.bg" + i, "UserUser@" + i, "user" + i, true));
             }
             User admin = new User();
             admin.setUsername("admin");

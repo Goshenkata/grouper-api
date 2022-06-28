@@ -268,7 +268,7 @@ public class PostService {
     }
 
     public List<PostFeedDTO> getFeed(int page, int size) {
-        return postRepository.findAll(PageRequest.of(page, size))
+        return postRepository.findAllByOrderByCreated(PageRequest.of(page, size))
                 .map(post -> mapper.map(post, PostFeedDTO.class))
                 .toList();
     }
