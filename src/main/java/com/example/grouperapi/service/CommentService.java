@@ -1,13 +1,16 @@
 package com.example.grouperapi.service;
 
-import com.example.grouperapi.model.entities.PostComment;
-import com.example.grouperapi.model.entities.Reply;
+import com.example.grouperapi.model.dto.AddCommentDTO;
+import com.example.grouperapi.model.dto.ResponseType;
+import com.example.grouperapi.model.entities.*;
 import com.example.grouperapi.repositories.CommentRepository;
+import com.example.grouperapi.repositories.ImageRepository;
 import com.example.grouperapi.repositories.PostRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
@@ -16,8 +19,47 @@ import java.util.List;
 @Service
 public class CommentService {
     private final CommentRepository commentRepository;
+    private final ImageRepository imageRepository;
     private final PostRepository postRepository;
     private final UserService userService;
+    private final CloudinaryService cloudinaryService;
+
+
+    @Transactional
+    public void addComment(AddCommentDTO addCommentDTO, String username) throws IOException {
+        if (addCommentDTO.getResponseType() == ResponseType.POST) {
+            PostComment postComment = new PostComment();
+            User author = userService.getUserByUsername(username);
+            postComment.setAuthor(author);
+            postComment.setContents(addCommentDTO.getContent());
+            if (!addCommentDTO.getImage().isEmpty()) {
+                Image image = cloudinaryService.postImage(addCommentDTO.getImage());
+                postComment.setImage(image);
+                imageRepository.save(image);
+            }
+            postComment.setCreated(Instant.now());
+            Post post = postRepository.findById(addCommentDTO.getId()).orElseThrow(() -> new RuntimeException("No post with id in the database"));
+            commentRepository.save(postComment);
+            postComment.setPost(post);
+            post.setCommentCount(post.getCommentCount() + 1);
+            postRepository.save(post);
+        } else if (addCommentDTO.getResponseType() == ResponseType.COMMENT) {
+            Reply reply = new Reply();
+            User author = userService.getUserByUsername(username);
+            reply.setAuthor(author);
+            reply.setContents(addCommentDTO.getContent());
+            if (!addCommentDTO.getImage().isEmpty()) {
+                Image image = cloudinaryService.postImage(addCommentDTO.getImage());
+                reply.setImage(image);
+                imageRepository.save(image);
+            }
+            reply.setCreated(Instant.now());
+            Comment comment = commentRepository.findById(addCommentDTO.getId()).orElseThrow(() -> new RuntimeException("invalid comment id"));
+            comment.getReplies().add(reply);
+            commentRepository.save(reply);
+            commentRepository.save(comment);
+        }
+    }
 
     public void seedComments() {
         if (commentRepository.count() == 0) {
@@ -130,7 +172,6 @@ public class CommentService {
         postComment.setCreated(Instant.now());
         return postComment;
     }
-
 
     private Reply createReply(String username, String contents) {
         Reply reply = new Reply();

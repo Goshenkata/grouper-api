@@ -18,6 +18,8 @@ public class Image {
     private String publicId;
     @OneToOne(mappedBy = "image")
     private Post post;
+    @OneToOne(mappedBy = "image")
+    private Comment comment;
     @OneToOne(mappedBy = "pfp")
     private User user;
 }

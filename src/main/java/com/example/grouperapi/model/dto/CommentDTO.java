@@ -16,5 +16,6 @@ public class CommentDTO implements Serializable {
     private UserDTO author;
     private Instant created;
     private String contents;
+    private ImageDTO image;
     private List<CommentDTO> replies;
 }

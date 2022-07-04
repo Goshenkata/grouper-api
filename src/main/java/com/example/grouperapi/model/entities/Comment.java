@@ -18,6 +18,8 @@ public abstract class Comment {
     private User author;
     @Column(nullable = false)
     private Instant created;
+    @OneToOne
+    private Image image;
     @Lob
     @Column(nullable = false)
     String contents;
