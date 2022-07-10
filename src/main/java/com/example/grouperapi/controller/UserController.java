@@ -1,4 +1,4 @@
-package com.example.grouperapi.model.dto;
+package com.example.grouperapi.controller;
 
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;

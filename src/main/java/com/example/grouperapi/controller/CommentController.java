@@ -1,5 +1,6 @@
-package com.example.grouperapi.model.dto;
+package com.example.grouperapi.controller;
 
+import com.example.grouperapi.model.dto.AddCommentDTO;
 import com.example.grouperapi.service.CommentService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

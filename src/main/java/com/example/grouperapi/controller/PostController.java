@@ -1,4 +1,4 @@
-package com.example.grouperapi.model.dto;
+package com.example.grouperapi.controller;
 
 
 import com.example.grouperapi.model.dto.FullPostInfoDTO;
