@@ -50,8 +50,7 @@ public class PostService {
                             Does that file get read into memory first, then outputed line by line. So conceivable it would utilize 100mb of memory until cat finishes, and then memory is freed?
                             Or does it handle it some other way?
                             Thanks!
-                                                                                    """,
-                    11
+                                                                                    """
             );
 
             //post 2
@@ -65,9 +64,7 @@ public class PostService {
                             Now, the issue is that whenever I search CI, CD, pipelines, Drone, Jenkins... up, all I find are videos and guides that just completely skip what that even means and just go straight into editing random files and stuff I understand nothing about. All I want is for my repo projects to auto-build and maybe run some tests, but I can't find any good starting point that goes through the basics of it. Can anyone ELI5?
                             Thank you so much!
                             PS: I'm ok with switching from Drone to Jenkins if that's more suitable, I just went with it because I'm not using just Java so it could've come in handy for other languages too - and I don't need a guide for that specific software, but literally just an introduction on how that stuff works. Thanks again!
-                                                                                    """,
-                    0
-            );
+                                                                                    """);
 
 
             //post 3
@@ -75,9 +72,7 @@ public class PostService {
                     "user2",
                     "news",
                     "Russia is blowing up bridges in Sievierodonetsk to thwart Ukrainian reinforcements, regional governor says",
-                    "https://www.reuters.com/world/europe/russia-blowing-up-bridges-sievierodonetsk-thwart-ukrainian-reinforcements-2022-06-04/",
-                    0
-
+                    "https://www.reuters.com/world/europe/russia-blowing-up-bridges-sievierodonetsk-thwart-ukrainian-reinforcements-2022-06-04/"
             );
 
             //post 4
@@ -91,8 +86,7 @@ public class PostService {
                             Най-вероятна причина за атаката на Никополската крепост е заради факта, че цар Иван Шишман влиза в съюз с унгарците и застава на страната и активно помага на влашкия владетел Мирча Стари при неуспешната за османците битка във Влахия при Ровине. В посоченото сражение загиват и османските васали Константин Драгаш - управител на Велбъжд и Крали Марко от Прилеп.
                             Именно след битката при Ровине Баязид се връща на юг от Дунав използвайки кораби на Иван Шишман и при пресичането на реката в района на Никопол, превзел града и пленил българския владетел. Остатъкът от Търновското царство са включени в Османската империя, а цар Иван Срацимир продължава да управлява на територията на Видинското царство до 1396 г.
                             Поклон!
-                                                                                    """,
-                    0
+                                                                                    """
             );
 
             //post 5
@@ -105,9 +99,7 @@ public class PostService {
                             Compiz seems to have a hella lot of bells and whistles along with animations that are actually usable, looking at the arch AUR repos, both 0.8 an 0.8 hasn't been updated since quite some time.
                             I get that there are extensions for gnome to do the same. but compiz can be standalone window manager for people like me and there are a lot of people like me who use stuff like bspwm, dwm, openbox, etc.
                             Why do you think compiz was forced to the backstage these days? 
-                                                        """,
-                    0
-            );
+                                                        """);
 
             //post 6
             createPost(
@@ -125,8 +117,7 @@ public class PostService {
                             ---------------------------------------------------------------------------------------------
                                                         
                             Are there any more python libraries / specific topics I need to know more to do well in this hackathon?
-                            [OR are there any of their suggested knowledges I shouldn't focus on]""",
-                    0);
+                            [OR are there any of their suggested knowledges I shouldn't focus on]""");
 
             //post 7
             createPost(
@@ -135,8 +126,7 @@ public class PostService {
                     "What are good learning resources for connecting desktop apps to websites?",
                     """
                             I am a newbie. But the best way to describe is like Dropbox. They have software that you can place on the desktop that connects to the their website. What resources can I learn to help me to do this?
-                                                        """,
-                    0
+                                                        """
             );
 
             //post 8
@@ -146,8 +136,7 @@ public class PostService {
                     "Should copy-paste code be avoided?",
                     """
                             So I graduated with cs bachelor's degree last year but am still working on my personal project to get a job. I'm Korean and most Korean companies require Spring Framework experience for entry level java developer roles so I'm making a webapp using Springboot framework. Anyway, I'm almost done with the project but I didn't come up with all the code by myself but referenced many websites and books, then borrowed some codes from various sources and modified them to run on my project. Idk if I should feel ashamed for this or it's a common practice among software engineers (web developers). I understand the logics behind the code I referenced thou. What's your opinons? 
-                            """,
-                    0
+                            """
             );
 
             //post 9
@@ -157,8 +146,7 @@ public class PostService {
                     "Machine Learning Roadmap?",
                     """
                             I want to learn more about data science, especially by the field of machine learning and ai, can you suggest some roadmap and resources about machine learning. I just really don't know where to start when learning machine learning
-                            """,
-                    0
+                            """
             );
 
 
@@ -172,8 +160,7 @@ public class PostService {
                             Especially in regard to OpenGL/Vulkan (going through OpenGL rn) and set everything up in a really basic sense, and then go in and change or add program-specific requirements.
                             Like with Vulkan in particular there’s no way people write ~1000 new lines of code just to begin a new project right? it seems easier to just change what’s necessary considering how verbose and explicit Vulkan is, it seems really difficult to start that from memory unless you really know the API well lol, maybe you do.
                             Do you do this or something similar?
-                                                        """,
-                    0
+                                                        """
             );
 
 
@@ -184,8 +171,7 @@ public class PostService {
                     "Някъв добър бг сайт за филми?",
                     """
                             Някой знае ли откъде мога да гледам family guy (семейният тип) с бг суб/аудио (което и да е от двете), доколкото знам преди са го давали по fox, но почти никакви епизоди не са записани и качени в нета?
-                            """,
-                    0
+                            """
             );
 
 
@@ -194,8 +180,7 @@ public class PostService {
                     "user4",
                     "bulgaria",
                     "How much does it cost to rent an apartment in Sofia and Plovdiv for one year?🤨",
-                    "",
-                    0
+                    ""
             );
 
 
@@ -214,8 +199,7 @@ public class PostService {
                             Step 5: Enjoy!
                                                         
                             There you go, your brand-new liberal-free Ubuntu system! It should feel faster because there's no more dumb liberals sapping your CPU's intelligence anymore. No more CIA Obama madness on your trusty Pentium rig.
-                                                        """,
-                    0
+                                                        """
             );
 
             //post 14
@@ -223,8 +207,7 @@ public class PostService {
                     "user6",
                     "linux",
                     "I don't like systemd.",
-                    "I just don't like it.",
-                    0
+                    "I just don't like it."
             );
 
 
@@ -239,8 +222,7 @@ public class PostService {
                             GNU/Linux/Systemd/GRUB/Bash/KDE
                             or as I have recently taken to calling it.
                             Linux+Systemd+GRUB+Bash+KDE
-                            """,
-                    0
+                            """
             );
 
 
@@ -253,8 +235,7 @@ public class PostService {
                             most specifically Mint, and all the result they promised me were evident: I was a lot faster in my computer, got promoted at work, my IQ increased in at least 1 digit, my wife started looking at me like a man, my erections lasted twice as long and everyone started to respect me, even if they didn't even know what Mint is.
                             However there was still some scepticism in my head, I refused to be an elitist because I couldn't even understand what was happening in my body. That was until I discovered Arch. The level of trascendence that Arch made me reach was enough to see what Windows and Mac users were: NPCs with no place in the world, more than being pawns in the 3d chess that we, Linux users, are always playing.
                             This coment was written from an interdimensional Gentoo system managed with the mind, so sorry if I get some spelling wrong.
-                            """,
-                    0
+                            """
             );
         }
     }
@@ -278,7 +259,6 @@ public class PostService {
         Post post = new Post();
         post.setPostType(dto.getImage().isEmpty() ? PostType.TEXT : PostType.IMAGE);
         post.setComments(new ArrayList<>());
-        post.setCommentCount(0);
         post.setContent(dto.getContent());
         post.setTitle(dto.getTitle());
         post.setGroup(groupService.getGroupByName(dto.getGroupName()));
@@ -294,7 +274,7 @@ public class PostService {
     }
 
 
-    private void createPost(String authorUsername, String groupName, String title, String content, Integer commentCount) {
+    private void createPost(String authorUsername, String groupName, String title, String content) {
         Post post = new Post();
         post.setPostType(PostType.TEXT);
         post.setCreated(Instant.now());
@@ -303,7 +283,6 @@ public class PostService {
         post.setTitle(title);
         post.setContent(content);
         post.setComments(new ArrayList<>());
-        post.setCommentCount(commentCount);
         postRepository.save(post);
     }
 }

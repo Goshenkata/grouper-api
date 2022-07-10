@@ -30,8 +30,6 @@ public class Post {
     @Lob
     @Column
     String content;
-    @Column(nullable = false)
-    Integer commentCount;
     @OneToMany(mappedBy = "post")
     private List<PostComment> comments;
     @ManyToOne

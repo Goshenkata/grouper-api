@@ -38,6 +38,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
         http.cors().configurationSource(request -> new CorsConfiguration().applyPermitDefaultValues());
+        http.headers().xssProtection().and().contentSecurityPolicy("script-src 'self'");
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests()
                 .antMatchers("/login", "/api/user/register", "/api/user/refreshToken").permitAll();

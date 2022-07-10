@@ -32,7 +32,7 @@ public class CommentService {
             User author = userService.getUserByUsername(username);
             postComment.setAuthor(author);
             postComment.setContents(addCommentDTO.getContent());
-            if (!addCommentDTO.getImage().isEmpty()) {
+            if (!(addCommentDTO.getImage() == null)) {
                 Image image = cloudinaryService.postImage(addCommentDTO.getImage());
                 postComment.setImage(image);
                 imageRepository.save(image);
@@ -41,14 +41,13 @@ public class CommentService {
             Post post = postRepository.findById(addCommentDTO.getId()).orElseThrow(() -> new RuntimeException("No post with id in the database"));
             commentRepository.save(postComment);
             postComment.setPost(post);
-            post.setCommentCount(post.getCommentCount() + 1);
             postRepository.save(post);
         } else if (addCommentDTO.getResponseType() == ResponseType.COMMENT) {
             Reply reply = new Reply();
             User author = userService.getUserByUsername(username);
             reply.setAuthor(author);
             reply.setContents(addCommentDTO.getContent());
-            if (!addCommentDTO.getImage().isEmpty()) {
+            if (addCommentDTO.getImage() != null) {
                 Image image = cloudinaryService.postImage(addCommentDTO.getImage());
                 reply.setImage(image);
                 imageRepository.save(image);

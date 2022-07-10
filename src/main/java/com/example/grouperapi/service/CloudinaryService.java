@@ -19,7 +19,7 @@ public class CloudinaryService {
     Cloudinary cloudinary;
 
     public Image postImage(MultipartFile multipartFile) throws IOException {
-        if (!multipartFile.isEmpty()) {
+        if (multipartFile != null) {
             File tempFile = File.createTempFile("temp-file", multipartFile.getOriginalFilename());
             multipartFile.transferTo(tempFile);
             Map<String, String> uploadResult = cloudinary.uploader()
