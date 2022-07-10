@@ -1,7 +1,11 @@
 package com.example.grouperapi.service;
 
+import com.example.grouperapi.controller.ProfileWidgetDTO;
+import com.example.grouperapi.model.dto.ImageDTO;
 import com.example.grouperapi.model.dto.RegistrationDTO;
+import com.example.grouperapi.model.entities.Image;
 import com.example.grouperapi.model.entities.User;
+import com.example.grouperapi.repositories.ImageRepository;
 import com.example.grouperapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +16,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.GetMapping;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -26,6 +31,7 @@ public class UserService implements UserDetailsService {
     private final PasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     private final RoleService roleService;
+    private final ImageRepository imageRepository;
 
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -49,13 +55,20 @@ public class UserService implements UserDetailsService {
                 registerUser(new RegistrationDTO("user" + i, "user@user.bg" + i, "UserUser@" + i, "user" + i, true));
             }
             User admin = new User();
+            Image image = new Image();
             admin.setUsername("admin");
             admin.setEmail("admin@admin.bg");
-            admin.setPassword(passwordEncoder.encode("admin"));
+            admin.setPassword(passwordEncoder.encode("Admin@123"));
             admin.setRoles(new ArrayList<>());
             admin.getRoles().add(roleService.getUserRole());
             admin.getRoles().add(roleService.getAdminRole());
+            image.setUrl("https://res.cloudinary.com/dcsi2qq6y/image/upload/v1657465724/EruW1H6WMAQsB5j_iwa27p_lxg5h7.jpg");
+            image.setPublicId("EruW1H6WMAQsB5j_iwa27p_lxg5h");
+            imageRepository.save(image);
+            admin.setPfp(image);
             userRepository.save(admin);
+
+            imageRepository.save(image);
             log.info("seeded users");
         } else {
             log.debug("users already initialised, moving on...");
@@ -75,7 +88,6 @@ public class UserService implements UserDetailsService {
         }
         user.setRoles(new ArrayList<>());
         user.getRoles().add(roleService.getUserRole());
-        log.info("user {} successfully registered", user.getUsername());
         userRepository.save(user);
         return Optional.of(user);
     }
@@ -87,4 +99,9 @@ public class UserService implements UserDetailsService {
     }
 
 
+    @GetMapping("/profile-widget")
+    public ProfileWidgetDTO getProfileWidget(String name) {
+        User userByUsername = this.getUserByUsername(name);
+        return modelMapper.map(userByUsername, ProfileWidgetDTO.class);
+    }
 }

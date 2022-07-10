@@ -12,6 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -100,9 +101,9 @@ public class UserController {
         }
     }
 
-    @GetMapping("test")
-    public ResponseEntity<String> test(Principal principal) {
-        log.info("Principal name: " + principal.getName());
-        return ResponseEntity.ok().body("test success");
+    @PreAuthorize("hasRole('USER')")
+    @GetMapping("profile-widget")
+    public ResponseEntity<ProfileWidgetDTO> profileWidgetDTO(Principal principal) {
+        return ResponseEntity.ok(userService.getProfileWidget(principal.getName()));
     }
 }
