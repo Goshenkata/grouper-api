@@ -3,8 +3,10 @@ package com.example.grouperapi.config;
 import com.cloudinary.Cloudinary;
 import com.example.grouperapi.converters.PostCommentsListToPostCount;
 import com.example.grouperapi.model.dto.FullPostInfoDTO;
+import com.example.grouperapi.model.dto.ObjectSearchReturnDTO;
 import com.example.grouperapi.model.dto.PostFeedDTO;
 import com.example.grouperapi.model.entities.Post;
+import com.example.grouperapi.model.entities.User;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
@@ -13,6 +15,7 @@ import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.modelmapper.TypeMap;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -43,6 +46,9 @@ public class ApplicationConfiguration {
                         using(new PostCommentsListToPostCount()).map(source.getComments(), destination.getCommentCount());
                     }
                 });
+        mapper.typeMap(User.class, ObjectSearchReturnDTO.class)
+                .addMapping(source -> source.getPfp().getUrl(), ObjectSearchReturnDTO::setImageUrl)
+                .addMapping(User::getUsername, ObjectSearchReturnDTO::setName);
         return mapper;
     }
 

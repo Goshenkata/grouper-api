@@ -2,6 +2,7 @@ package com.example.grouperapi.service;
 
 import com.example.grouperapi.controller.ProfileWidgetDTO;
 import com.example.grouperapi.model.dto.ImageDTO;
+import com.example.grouperapi.model.dto.ObjectSearchReturnDTO;
 import com.example.grouperapi.model.dto.RegistrationDTO;
 import com.example.grouperapi.model.entities.Image;
 import com.example.grouperapi.model.entities.User;
@@ -9,7 +10,12 @@ import com.example.grouperapi.repositories.ImageRepository;
 import com.example.grouperapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import me.xdrop.fuzzywuzzy.FuzzySearch;
+import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,7 +27,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -103,5 +111,25 @@ public class UserService implements UserDetailsService {
     public ProfileWidgetDTO getProfileWidget(String name) {
         User userByUsername = this.getUserByUsername(name);
         return modelMapper.map(userByUsername, ProfileWidgetDTO.class);
+    }
+
+    @Cacheable("userSearch")
+    public List<ObjectSearchReturnDTO> getUserSearch(String query) {
+        return FuzzySearch
+                .extractSorted(
+                        query,
+                        userRepository.getQueryResult(query).stream().map(user -> modelMapper.map(user, ObjectSearchReturnDTO.class)).toList(),
+                        ObjectSearchReturnDTO::getName,
+                        4)
+                .stream()
+                .limit(4)
+                .map(BoundExtractedResult::getReferent)
+                .toList();
+    }
+
+    @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
+    @CacheEvict(cacheNames="userSearch", allEntries=true)
+    public void refreshCache() {
+        log.info("refreshed groupSearch cache");
     }
 }

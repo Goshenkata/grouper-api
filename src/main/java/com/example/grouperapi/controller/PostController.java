@@ -53,7 +53,7 @@ public class PostController {
         }
         //max image size == 10mb
         if (dto.getImage().getSize() > 10_000_000) {
-            return ResponseEntity.badRequest().body("Image too large, must not exceed 10 mb");
+            return ResponseEntity.status(413).body("Image too large, must not exceed 10 mb");
         }
         Long postId = postService.createPost(dto, principal.getName());
         return ResponseEntity.created(URI.create("http://localhost:8080/api/post/" + postId)).build();
