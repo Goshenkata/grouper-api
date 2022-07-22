@@ -130,6 +130,5 @@ public class UserService implements UserDetailsService {
     @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
     @CacheEvict(cacheNames="userSearch", allEntries=true)
     public void refreshCache() {
-        log.info("refreshed groupSearch cache");
     }
 }

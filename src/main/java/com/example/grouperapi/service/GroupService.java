@@ -81,6 +81,5 @@ public class GroupService {
     @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
     @CacheEvict(cacheNames="groupSearch", allEntries=true)
     public void refreshCache() {
-        log.info("refreshed groupSearch cache");
     }
 }
