@@ -19,7 +19,7 @@ public class FullPostInfoDTO implements Serializable {
     private UserDTO postAuthor;
     private String content;
     private String title;
-    private String groupName;
+    private GroupInfoDTO group;
     private Integer commentCount;
     private ImageDTO image;
     private List<CommentDTO> comments;

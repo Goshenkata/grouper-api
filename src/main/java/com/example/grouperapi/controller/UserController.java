@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import com.example.grouperapi.model.dto.ProfileWidgetDTO;
 import com.example.grouperapi.model.dto.RegistrationDTO;
 import com.example.grouperapi.model.entities.Role;
 import com.example.grouperapi.model.entities.User;

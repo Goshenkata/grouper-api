@@ -257,7 +257,7 @@ public class PostService {
     @Transactional
     public Long createPost(PostCreationDTO dto, String username) throws IOException {
         Post post = new Post();
-        post.setPostType(dto.getImage().isEmpty() ? PostType.TEXT : PostType.IMAGE);
+        post.setPostType(dto.getImage() == null ? PostType.TEXT : PostType.IMAGE);
         post.setComments(new ArrayList<>());
         post.setContent(dto.getContent());
         post.setTitle(dto.getTitle());
@@ -265,10 +265,11 @@ public class PostService {
         post.setAuthor(userService.getUserByUsername(username));
         post.setCreated(Instant.now());
 
-        Image image = cloudinaryService.postImage(dto.getImage());
-        post.setImage(image);
-
-        imageRepository.save(image);
+        if (dto.getImage() != null) {
+            Image image = cloudinaryService.postImage(dto.getImage());
+            post.setImage(image);
+            imageRepository.save(image);
+        }
         Post save = postRepository.save(post);
         return save.getId();
     }

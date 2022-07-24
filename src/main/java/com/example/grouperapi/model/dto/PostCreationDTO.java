@@ -6,8 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
+import javax.validation.constraints.*;
 import java.io.Serializable;
 
 @Data
@@ -16,9 +15,12 @@ import java.io.Serializable;
 @ToString
 public class PostCreationDTO implements Serializable {
     @NotNull(message = "Post must have a title")
+    @Size(min = 1, max = 256, message = "Post must be between 1 and 256 characters")
     private String title;
     private MultipartFile image;
+    @NotBlank(message = "Content cannot be blank")
+    @Size(min = 1, max = 65536, message = "Content must be between 1 and 65536 characters")
     String content;
-    @NotNull(message = "invalid group")
+    @NotBlank(message = "No such group")
     private String groupName;
 }

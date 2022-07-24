@@ -4,9 +4,12 @@ package com.example.grouperapi.controller;
 import com.example.grouperapi.model.dto.FullPostInfoDTO;
 import com.example.grouperapi.model.dto.PostCreationDTO;
 import com.example.grouperapi.model.dto.PostFeedDTO;
+import com.example.grouperapi.model.dto.StringJsonDTO;
 import com.example.grouperapi.service.GroupService;
 import com.example.grouperapi.service.PostService;
+import jdk.jfr.ContentType;
 import lombok.AllArgsConstructor;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
@@ -41,22 +44,24 @@ public class PostController {
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<String> addPost(@Valid @ModelAttribute PostCreationDTO dto,
-                                          BindingResult bindingResult,
-                                          Principal principal) throws IOException {
+    public ResponseEntity<StringJsonDTO> addPost(@Valid @ModelAttribute PostCreationDTO dto,
+                                                 BindingResult bindingResult,
+                                                 Principal principal) throws IOException {
         //validation
-        if (bindingResult.hasErrors()){
-            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().get(0).getDefaultMessage());
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(new StringJsonDTO(bindingResult.getAllErrors().get(0).getDefaultMessage()));
         }
         if (groupService.findByGroupByName(dto.getGroupName()).isEmpty()) {
-            return ResponseEntity.badRequest().body("Invalid group");
+            return ResponseEntity.badRequest().body(new StringJsonDTO("No such group"));
         }
         //max image size == 10mb
-        if (dto.getImage().getSize() > 10_000_000) {
-            return ResponseEntity.status(413).body("Image too large, must not exceed 10 mb");
+        if (dto.getImage() != null && dto.getImage().getSize() > 10_000_000) {
+            return ResponseEntity.status(413).body(new StringJsonDTO("Image too large, must not exceed 10 mb"));
         }
         Long postId = postService.createPost(dto, principal.getName());
-        return ResponseEntity.created(URI.create("http://localhost:8080/api/post/" + postId)).build();
+        return ResponseEntity
+                .created(URI.create("http://localhost:8080/api/post/" + postId))
+                .body(new StringJsonDTO("post/" + postId));
     }
 
 }

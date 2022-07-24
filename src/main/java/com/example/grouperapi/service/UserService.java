@@ -1,7 +1,6 @@
 package com.example.grouperapi.service;
 
-import com.example.grouperapi.controller.ProfileWidgetDTO;
-import com.example.grouperapi.model.dto.ImageDTO;
+import com.example.grouperapi.model.dto.ProfileWidgetDTO;
 import com.example.grouperapi.model.dto.ObjectSearchReturnDTO;
 import com.example.grouperapi.model.dto.RegistrationDTO;
 import com.example.grouperapi.model.entities.Image;
