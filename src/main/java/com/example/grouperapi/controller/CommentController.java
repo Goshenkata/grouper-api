@@ -29,7 +29,6 @@ public class CommentController {
     public ResponseEntity<Void> addComment(@Valid @ModelAttribute AddCommentDTO addCommentDTO,
                                            BindingResult bindingResult,
                                            Principal principal) throws IOException {
-        System.out.println(addCommentDTO);
         if (bindingResult.hasErrors()) {
             log.debug("invalid input");
             return ResponseEntity.badRequest().build();

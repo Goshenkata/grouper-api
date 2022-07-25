@@ -3,6 +3,7 @@ package com.example.grouperapi.service;
 import com.example.grouperapi.model.dto.FullPostInfoDTO;
 import com.example.grouperapi.model.dto.PostCreationDTO;
 import com.example.grouperapi.model.dto.PostFeedDTO;
+import com.example.grouperapi.model.dto.SortType;
 import com.example.grouperapi.model.entities.Image;
 import com.example.grouperapi.model.entities.Post;
 import com.example.grouperapi.model.entities.enums.PostType;
@@ -17,6 +18,10 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -248,10 +253,16 @@ public class PostService {
         return mapper.map(post, FullPostInfoDTO.class);
     }
 
-    public List<PostFeedDTO> getFeed(int page, int size) {
-        return postRepository.findAllByOrderByCreated(PageRequest.of(page, size))
-                .map(post -> mapper.map(post, PostFeedDTO.class))
-                .toList();
+    public List<PostFeedDTO> getFeed(int page, int size, SortType sort) {
+        if (sort == SortType.NEW) {
+            return postRepository.findAllByOrderByCreatedDesc(PageRequest.of(page, size))
+                    .map(post -> mapper.map(post, PostFeedDTO.class))
+                    .toList();
+        } else {
+            return postRepository.findAllRising(PageRequest.of(page, size), Instant.now().minus(1,ChronoUnit.DAYS))
+                    .map(post -> mapper.map(post, PostFeedDTO.class))
+                    .toList();
+        }
     }
 
     @Transactional

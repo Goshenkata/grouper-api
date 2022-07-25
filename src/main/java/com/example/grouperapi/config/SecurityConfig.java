@@ -2,6 +2,7 @@ package com.example.grouperapi.config;
 
 import com.example.grouperapi.filter.CustomAuthenticationFilter;
 import com.example.grouperapi.filter.CustomAuthorizationFilter;
+import com.example.grouperapi.service.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,6 +28,8 @@ import static org.springframework.security.config.http.SessionCreationPolicy.*;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final UserDetailsService userDetailsService;
     private final PasswordEncoder passwordEncoder;
+    private final UserService userService;
+
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {

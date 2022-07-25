@@ -1,10 +1,7 @@
 package com.example.grouperapi.controller;
 
 
-import com.example.grouperapi.model.dto.FullPostInfoDTO;
-import com.example.grouperapi.model.dto.PostCreationDTO;
-import com.example.grouperapi.model.dto.PostFeedDTO;
-import com.example.grouperapi.model.dto.StringJsonDTO;
+import com.example.grouperapi.model.dto.*;
 import com.example.grouperapi.service.GroupService;
 import com.example.grouperapi.service.PostService;
 import jdk.jfr.ContentType;
@@ -38,8 +35,10 @@ public class PostController {
     }
 
     @GetMapping("feed")
-    public ResponseEntity<List<PostFeedDTO>> getPostFeed(@RequestParam("page") int page, @RequestParam("size") int size) {
-        return ResponseEntity.ok(postService.getFeed(page, size));
+    public ResponseEntity<List<PostFeedDTO>> getPostFeed(@RequestParam("page") int page,
+                                                         @RequestParam("size") int size,
+                                                         @RequestParam SortType sort) {
+        return ResponseEntity.ok(postService.getFeed(page, size, sort));
     }
 
     @PostMapping
