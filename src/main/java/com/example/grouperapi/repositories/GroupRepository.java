@@ -15,4 +15,6 @@ public interface GroupRepository extends JpaRepository<GroupEntity, Long> {
     Optional<GroupEntity> findByName(String name);
     @Query("select new com.example.grouperapi.model.dto.ObjectSearchReturnDTO(g.iconUrl, g.name) from GroupEntity g")
     List<ObjectSearchReturnDTO> getQueryResult(String query);
+
+    boolean existsByName(String name);
 }

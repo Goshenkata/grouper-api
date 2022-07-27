@@ -18,15 +18,17 @@ public class GroupEntity {
 
     @Column(nullable = false, unique = true)
     String name;
-    //todo add cloudinary and make not null
+
     @Column
     String iconUrl;
+    @Column(columnDefinition = "TEXT")
+    String description;
 
-    @ManyToMany
-    @JoinTable(name = "members_groups",
-    joinColumns = @JoinColumn(name = "group_entity_id"),
-    inverseJoinColumns = @JoinColumn(name = "user_id"))
-    private List<User> members;
+//    @ManyToMany
+//    @JoinTable(name = "members_groups",
+//    joinColumns = @JoinColumn(name = "group_entity_id"),
+//    inverseJoinColumns = @JoinColumn(name = "user_id"))
+//    private List<User> members;
 
     @OneToMany(mappedBy = "group")
     private List<Post> posts;

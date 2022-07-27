@@ -34,12 +34,6 @@ public class PostController {
         return ResponseEntity.ok(fullPostInfoDTO);
     }
 
-    @GetMapping("feed")
-    public ResponseEntity<List<PostFeedDTO>> getPostFeed(@RequestParam("page") int page,
-                                                         @RequestParam("size") int size,
-                                                         @RequestParam SortType sort) {
-        return ResponseEntity.ok(postService.getFeed(page, size, sort));
-    }
 
     @PostMapping
     @PreAuthorize("hasRole('USER')")

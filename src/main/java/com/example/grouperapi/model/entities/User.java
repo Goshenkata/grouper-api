@@ -19,14 +19,16 @@ public class User {
     private String username;
     @Column(nullable = false, unique = true)
     private String email;
+    @Column(columnDefinition = "TEXT")
+    private String description;
     @Column(nullable = false)
     private String password;
     @ManyToMany
     Collection<Role> roles;
     @OneToMany(mappedBy = "author")
     List<Post> posts;
-    @ManyToMany(mappedBy = "members")
-    List<GroupEntity> groups;
+//    @ManyToMany(mappedBy = "members")
+//    List<GroupEntity> groups;
     @OneToOne
     private Image pfp;
 }

@@ -253,17 +253,6 @@ public class PostService {
         return mapper.map(post, FullPostInfoDTO.class);
     }
 
-    public List<PostFeedDTO> getFeed(int page, int size, SortType sort) {
-        if (sort == SortType.NEW) {
-            return postRepository.findAllByOrderByCreatedDesc(PageRequest.of(page, size))
-                    .map(post -> mapper.map(post, PostFeedDTO.class))
-                    .toList();
-        } else {
-            return postRepository.findAllRising(PageRequest.of(page, size), Instant.now().minus(1,ChronoUnit.DAYS))
-                    .map(post -> mapper.map(post, PostFeedDTO.class))
-                    .toList();
-        }
-    }
 
     @Transactional
     public Long createPost(PostCreationDTO dto, String username) throws IOException {

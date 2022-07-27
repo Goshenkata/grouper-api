@@ -4,6 +4,7 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
+import com.example.grouperapi.model.dto.ObjectSearchReturnDTO;
 import com.example.grouperapi.model.dto.ProfileWidgetDTO;
 import com.example.grouperapi.model.dto.RegistrationDTO;
 import com.example.grouperapi.model.entities.Role;
@@ -106,5 +107,13 @@ public class UserController {
     @GetMapping("profile-widget")
     public ResponseEntity<ProfileWidgetDTO> profileWidgetDTO(Principal principal) {
         return ResponseEntity.ok(userService.getProfileWidget(principal.getName()));
+    }
+
+    @GetMapping("{username}")
+    public ResponseEntity<ObjectSearchReturnDTO> getUserInfo(@PathVariable String username) {
+        if (!userService.existsByUsername(username)) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(userService.getUserInfo(username));
     }
 }

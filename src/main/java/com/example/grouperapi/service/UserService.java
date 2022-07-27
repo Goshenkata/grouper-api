@@ -112,6 +112,7 @@ public class UserService implements UserDetailsService {
         return modelMapper.map(userByUsername, ProfileWidgetDTO.class);
     }
 
+
     @Cacheable("userSearch")
     public List<ObjectSearchReturnDTO> getUserSearch(String query) {
         return FuzzySearch
@@ -129,5 +130,13 @@ public class UserService implements UserDetailsService {
     @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
     @CacheEvict(cacheNames="userSearch", allEntries=true)
     public void refreshCache() {
+    }
+
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
+
+    public ObjectSearchReturnDTO getUserInfo(String username) {
+        return modelMapper.map(getUserByUsername(username), ObjectSearchReturnDTO.class);
     }
 }

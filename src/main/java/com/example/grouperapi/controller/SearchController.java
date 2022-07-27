@@ -16,11 +16,12 @@ import java.util.stream.Collectors;
 
 @RestController
 @AllArgsConstructor
+@RequestMapping("/api/")
 public class SearchController {
     private final GroupService groupService;
     private final UserService userService;
 
-    @GetMapping("/get-object")
+    @GetMapping("get-object")
     public ResponseEntity searchResult(@RequestParam String query, @RequestParam ObjectTypeEnum objectType) {
         if (query.isBlank()) return ResponseEntity.badRequest().body("query can't be empty");
         if (objectType == null) {
@@ -35,4 +36,6 @@ public class SearchController {
         }
         return ResponseEntity.ok(searchResult);
     }
+
+
 }

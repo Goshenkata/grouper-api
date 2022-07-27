@@ -5,6 +5,7 @@ import com.example.grouperapi.converters.PostCommentsListToPostCount;
 import com.example.grouperapi.model.dto.FullPostInfoDTO;
 import com.example.grouperapi.model.dto.ObjectSearchReturnDTO;
 import com.example.grouperapi.model.dto.PostFeedDTO;
+import com.example.grouperapi.model.dto.UserInfoDTO;
 import com.example.grouperapi.model.entities.Post;
 import com.example.grouperapi.model.entities.User;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -49,6 +50,11 @@ public class ApplicationConfiguration {
         mapper.typeMap(User.class, ObjectSearchReturnDTO.class)
                 .addMapping(source -> source.getPfp().getUrl(), ObjectSearchReturnDTO::setImageUrl)
                 .addMapping(User::getUsername, ObjectSearchReturnDTO::setName);
+
+        mapper.typeMap(User.class, UserInfoDTO.class)
+                .addMapping(source -> source.getPfp().getUrl(), UserInfoDTO::setImageUrl)
+                .addMapping(User::getUsername, UserInfoDTO::setName)
+                .addMapping(User::getDescription, UserInfoDTO::setDescription);
         return mapper;
     }
 
