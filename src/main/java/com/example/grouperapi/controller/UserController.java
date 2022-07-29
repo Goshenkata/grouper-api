@@ -141,4 +141,23 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("roles")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<RolesDTO> roles(Principal principal) {
+        return ResponseEntity.ok(userService.getRolesArr(principal.getName()));
+    }
+
+
+    @GetMapping("roles/{username}")
+    public ResponseEntity<RolesDTO> roles(@PathVariable String username) {
+        return ResponseEntity.ok(userService.getRolesArr(username));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping("roles/admin/{username}")
+    public ResponseEntity makeAdmin(@PathVariable String username) {
+        userService.makeAdmin(username);
+        return ResponseEntity.ok().build();
+    }
+
 }

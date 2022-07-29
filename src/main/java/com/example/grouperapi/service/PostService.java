@@ -7,6 +7,7 @@ import com.example.grouperapi.model.dto.SortType;
 import com.example.grouperapi.model.entities.Image;
 import com.example.grouperapi.model.entities.Post;
 import com.example.grouperapi.model.entities.enums.PostType;
+import com.example.grouperapi.repositories.CommentRepository;
 import com.example.grouperapi.repositories.ImageRepository;
 import com.example.grouperapi.repositories.PostRepository;
 import lombok.AllArgsConstructor;
@@ -32,6 +33,7 @@ import java.util.Optional;
 public class PostService {
 
     private PostRepository postRepository;
+    private CommentRepository commentRepository;
     private UserService userService;
     private ImageRepository imageRepository;
     private GroupService groupService;
@@ -285,5 +287,25 @@ public class PostService {
         post.setContent(content);
         post.setComments(new ArrayList<>());
         postRepository.save(post);
+    }
+
+    public Post getById(Long id) {
+        return postRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Post with id " + id + " doesn't exist"));
+    }
+
+    public String getAuthor(Long id) {
+        return getById(id).getAuthor().getUsername();
+    }
+
+    @Transactional
+    public void delete(Long id) throws IOException {
+        Post post = postRepository.getById(id);
+        commentRepository.deleteAll(post.getComments());
+        if (post.getImage() != null) {
+            cloudinaryService.deleteImage(post.getImage());
+            imageRepository.delete(post.getImage());
+        }
+        postRepository.delete(post);
     }
 }

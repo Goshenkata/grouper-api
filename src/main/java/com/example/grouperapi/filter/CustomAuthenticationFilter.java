@@ -74,6 +74,7 @@ public class CustomAuthenticationFilter extends UsernamePasswordAuthenticationFi
         tokens.put("access_token", accessToken);
         tokens.put("refresh_token", refreshToken);
         tokens.put("expires_at", accessTokenExpiration);
+        tokens.put("role", user.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray());
         tokens.put("username", request.getParameter("username"));
         response.setContentType(APPLICATION_JSON_VALUE);
         new ObjectMapper().writeValue(response.getOutputStream(), tokens);

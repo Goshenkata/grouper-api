@@ -4,11 +4,14 @@ package com.example.grouperapi.controller;
 import com.example.grouperapi.model.dto.*;
 import com.example.grouperapi.service.GroupService;
 import com.example.grouperapi.service.PostService;
+import com.example.grouperapi.service.UserService;
 import jdk.jfr.ContentType;
 import lombok.AllArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -17,12 +20,14 @@ import java.io.IOException;
 import java.net.URI;
 import java.security.Principal;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/post/")
 @AllArgsConstructor
 public class PostController {
     private final PostService postService;
+    private final UserService userService;
     private final GroupService groupService;
 
     @GetMapping("{id}")
@@ -57,4 +62,18 @@ public class PostController {
                 .body(new StringJsonDTO("post/" + postId));
     }
 
+
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity deletePost(@PathVariable Long id,
+                                     Principal principal) throws IOException {
+        // if the principal is the author of the post or an admin
+        if (principal.getName().equals(postService.getAuthor(id))
+                || userService.isAdmin(principal.getName())) {
+            postService.delete(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(403).build();
+        }
+    }
 }

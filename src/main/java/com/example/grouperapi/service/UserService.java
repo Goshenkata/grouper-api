@@ -1,10 +1,8 @@
 package com.example.grouperapi.service;
 
-import com.example.grouperapi.model.dto.ProfileWidgetDTO;
-import com.example.grouperapi.model.dto.ObjectSearchReturnDTO;
-import com.example.grouperapi.model.dto.RegistrationDTO;
-import com.example.grouperapi.model.dto.UserInfoDTO;
+import com.example.grouperapi.model.dto.*;
 import com.example.grouperapi.model.entities.Image;
+import com.example.grouperapi.model.entities.Role;
 import com.example.grouperapi.model.entities.User;
 import com.example.grouperapi.repositories.ImageRepository;
 import com.example.grouperapi.repositories.UserRepository;
@@ -15,7 +13,9 @@ import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -23,8 +23,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
@@ -157,6 +155,7 @@ public class UserService implements UserDetailsService {
         user.setPfp(null);
         userRepository.save(user);
     }
+
     @Transactional
     public void changePfp(MultipartFile multipartFile, String name) throws IOException {
         User user = getUserByUsername(name);
@@ -175,6 +174,27 @@ public class UserService implements UserDetailsService {
     public void changeDescription(String description, String name) {
         User user = getUserByUsername(name);
         user.setDescription(description);
+        userRepository.save(user);
+    }
+
+    public boolean isAdmin(String name) {
+        return getUserByUsername(name).getRoles().stream().map(Role::getName).toList().contains("ROLE_ADMIN");
+    }
+
+    public RolesDTO getRolesArr(String username) {
+        String[] roles = this.loadUserByUsername(username)
+                .getAuthorities()
+                .stream()
+                .map(GrantedAuthority::getAuthority)
+                .toArray(String[]::new);
+        return new RolesDTO(roles);
+    }
+
+    public void makeAdmin(String username) {
+        User user = getUserByUsername(username);
+        if (!user.getRoles().contains(roleService.getAdminRole())) {
+            user.getRoles().add(roleService.getAdminRole());
+        }
         userRepository.save(user);
     }
 }
