@@ -19,6 +19,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsByEmail(String email);
 
 //    @Query("select e from User e where e.username like concat('%', :query, '%')")
-    @Query("select e from User e")
-    List<User> getQueryResult(String query);
+//    @Query("select e from User e")
+//    List<User> getQueryResult(String query);
 }

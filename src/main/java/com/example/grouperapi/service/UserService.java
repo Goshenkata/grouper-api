@@ -3,6 +3,7 @@ package com.example.grouperapi.service;
 import com.example.grouperapi.model.dto.ProfileWidgetDTO;
 import com.example.grouperapi.model.dto.ObjectSearchReturnDTO;
 import com.example.grouperapi.model.dto.RegistrationDTO;
+import com.example.grouperapi.model.dto.UserInfoDTO;
 import com.example.grouperapi.model.entities.Image;
 import com.example.grouperapi.model.entities.User;
 import com.example.grouperapi.repositories.ImageRepository;
@@ -22,8 +23,12 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.transaction.Transactional;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -39,6 +44,7 @@ public class UserService implements UserDetailsService {
     private final UserRepository userRepository;
     private final RoleService roleService;
     private final ImageRepository imageRepository;
+    private final CloudinaryService cloudinaryService;
 
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -118,7 +124,7 @@ public class UserService implements UserDetailsService {
         return FuzzySearch
                 .extractSorted(
                         query,
-                        userRepository.getQueryResult(query).stream().map(user -> modelMapper.map(user, ObjectSearchReturnDTO.class)).toList(),
+                        userRepository.findAll().stream().map(user -> modelMapper.map(user, ObjectSearchReturnDTO.class)).toList(),
                         ObjectSearchReturnDTO::getName,
                         4)
                 .stream()
@@ -128,7 +134,7 @@ public class UserService implements UserDetailsService {
     }
 
     @Scheduled(fixedDelay = 5, timeUnit = TimeUnit.MINUTES)
-    @CacheEvict(cacheNames="userSearch", allEntries=true)
+    @CacheEvict(cacheNames = "userSearch", allEntries = true)
     public void refreshCache() {
     }
 
@@ -136,7 +142,39 @@ public class UserService implements UserDetailsService {
         return userRepository.existsByUsername(username);
     }
 
-    public ObjectSearchReturnDTO getUserInfo(String username) {
-        return modelMapper.map(getUserByUsername(username), ObjectSearchReturnDTO.class);
+    public UserInfoDTO getUserInfo(String username) {
+        return modelMapper.map(getUserByUsername(username), UserInfoDTO.class);
+    }
+
+    @Transactional
+    public void removePfp(String name) throws IOException {
+        User user = getUserByUsername(name);
+        if (user.getPfp() != null) {
+            Image pfp = user.getPfp();
+            cloudinaryService.deleteImage(pfp);
+            imageRepository.delete(pfp);
+        }
+        user.setPfp(null);
+        userRepository.save(user);
+    }
+    @Transactional
+    public void changePfp(MultipartFile multipartFile, String name) throws IOException {
+        User user = getUserByUsername(name);
+        //todo delete
+        if (user.getPfp() != null) {
+            Image pfp = user.getPfp();
+            cloudinaryService.deleteImage(pfp);
+            imageRepository.delete(pfp);
+        }
+        Image image = cloudinaryService.postImage(multipartFile);
+        imageRepository.save(image);
+        user.setPfp(image);
+        userRepository.save(user);
+    }
+
+    public void changeDescription(String description, String name) {
+        User user = getUserByUsername(name);
+        user.setDescription(description);
+        userRepository.save(user);
     }
 }

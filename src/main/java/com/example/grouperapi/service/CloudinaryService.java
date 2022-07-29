@@ -1,7 +1,6 @@
 package com.example.grouperapi.service;
 
 import com.cloudinary.Cloudinary;
-import com.example.grouperapi.model.dto.ImageDTO;
 import com.example.grouperapi.model.entities.Image;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,7 +15,7 @@ import java.util.Map;
 @AllArgsConstructor
 @Slf4j
 public class CloudinaryService {
-    Cloudinary cloudinary;
+    private Cloudinary cloudinary;
 
     public Image postImage(MultipartFile multipartFile) throws IOException {
         if (multipartFile != null) {
@@ -31,7 +30,13 @@ public class CloudinaryService {
             image.setUrl(url);
             return image;
         }
-        log.debug("multipart is empty");
+        log.error("multipart is empty");
         return null;
+    }
+
+    public void deleteImage(Image pfp) throws IOException {
+        cloudinary
+                .uploader()
+                .destroy(pfp.getPublicId(), Map.of());
     }
 }

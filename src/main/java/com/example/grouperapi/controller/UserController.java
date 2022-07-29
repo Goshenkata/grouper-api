@@ -4,19 +4,19 @@ import com.auth0.jwt.JWT;
 import com.auth0.jwt.algorithms.Algorithm;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
-import com.example.grouperapi.model.dto.ObjectSearchReturnDTO;
-import com.example.grouperapi.model.dto.ProfileWidgetDTO;
-import com.example.grouperapi.model.dto.RegistrationDTO;
+import com.example.grouperapi.model.dto.*;
 import com.example.grouperapi.model.entities.Role;
 import com.example.grouperapi.model.entities.User;
 import com.example.grouperapi.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.servlet.http.HttpServletRequest;
@@ -44,7 +44,7 @@ public class UserController {
 
     @PostMapping("register")
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegistrationDTO registrationDTO,
-                                                 BindingResult bindingResult) {
+                                               BindingResult bindingResult) {
         //check if the username is taken, and if not register the new user
         Optional<User> userOptional = userService.registerUser(registrationDTO);
         if (userOptional.isEmpty()) {
@@ -52,7 +52,7 @@ public class UserController {
         }
 
         //check if any of the fields are invalid, fronend validation for this
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body("bad input");
         }
 
@@ -110,10 +110,35 @@ public class UserController {
     }
 
     @GetMapping("{username}")
-    public ResponseEntity<ObjectSearchReturnDTO> getUserInfo(@PathVariable String username) {
+    public ResponseEntity<UserInfoDTO> getUserInfo(@PathVariable String username) {
         if (!userService.existsByUsername(username)) {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(userService.getUserInfo(username));
     }
+
+    @PatchMapping("pfp")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity pfp(@RequestParam MultipartFile pfp,
+                              Principal principal) throws IOException {
+        userService.changePfp(pfp, principal.getName());
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("pfp")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity pfp(Principal principal) throws IOException {
+        userService.removePfp(principal.getName());
+        return ResponseEntity.ok().build();
+    }
+
+
+    @PatchMapping("description")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity description(@RequestBody DescriptionDTO description,
+                                      Principal principal) throws IOException {
+        userService.changeDescription(description.getDescription(), principal.getName());
+        return ResponseEntity.ok().build();
+    }
+
 }
