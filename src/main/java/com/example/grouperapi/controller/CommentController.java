@@ -2,6 +2,7 @@ package com.example.grouperapi.controller;
 
 import com.example.grouperapi.model.dto.AddCommentDTO;
 import com.example.grouperapi.service.CommentService;
+import com.example.grouperapi.service.UserService;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
@@ -23,8 +24,9 @@ import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 @Slf4j
 public class CommentController {
     private final CommentService commentService;
+    private final UserService userService;
 
-    @PostMapping(value = "/add",consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+    @PostMapping(value = "/add", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity<Void> addComment(@Valid @ModelAttribute AddCommentDTO addCommentDTO,
                                            BindingResult bindingResult,
@@ -35,5 +37,18 @@ public class CommentController {
         }
         commentService.addComment(addCommentDTO, principal.getName());
         return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("{id}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity delete(@PathVariable Long id,
+                                 Principal principal) throws IOException {
+        if (principal.getName().equals(commentService.getAuthorName(id))
+                || userService.isAdmin(principal.getName())) {
+            commentService.delete(id);
+            return ResponseEntity.ok().build();
+        } else {
+            return ResponseEntity.status(403).build();
+        }
     }
 }

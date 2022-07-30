@@ -7,6 +7,7 @@ import com.example.grouperapi.repositories.CommentRepository;
 import com.example.grouperapi.repositories.ImageRepository;
 import com.example.grouperapi.repositories.PostRepository;
 import lombok.AllArgsConstructor;
+import org.springframework.data.repository.cdi.Eager;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,7 +26,6 @@ public class CommentService {
     private final CloudinaryService cloudinaryService;
 
 
-    @Transactional
     public void addComment(AddCommentDTO addCommentDTO, String username) throws IOException {
         if (addCommentDTO.getResponseType() == ResponseType.POST) {
             PostComment postComment = new PostComment();
@@ -118,10 +118,12 @@ public class CommentService {
         reply1.setReplies(replies2);
         replies1.add(reply1);
         topLevelReply.setReplies(replies1);
+        commentRepository.save(reply1);
+        commentRepository.save(reply2);
+        commentRepository.save(reply3);
         commentRepository.save(topLevelReply);
     }
 
-    @Transactional
     void postComment1() {
         PostComment topLevelReply1 = createTopComment(1L, "user2", "It depends on the exact ementation, but most of them either use a fixed size buffer or a syscall to have the kernel transfer data directly from the input to the output.");
         List<Reply> replies = new ArrayList<>();
@@ -160,6 +162,10 @@ public class CommentService {
         reply1.getReplies().add(reply2);
         replies.add(reply1);
         topLevelReply1.setReplies(replies);
+        commentRepository.save(reply1);
+        commentRepository.save(reply2);
+        commentRepository.save(reply4);
+        commentRepository.save(reply5);
         commentRepository.save(topLevelReply1);
     }
 
@@ -169,6 +175,7 @@ public class CommentService {
         postComment.setAuthor(userService.getUserByUsername(username));
         postComment.setContents(contents);
         postComment.setCreated(Instant.now());
+        commentRepository.save(postComment);
         return postComment;
     }
 
@@ -177,6 +184,27 @@ public class CommentService {
         reply.setAuthor(userService.getUserByUsername(username));
         reply.setContents(contents);
         reply.setCreated(Instant.now());
+        commentRepository.save(reply);
         return reply;
+    }
+
+    public String getAuthorName(Long id) {
+        return commentRepository
+                .getById(id)
+                .getAuthor()
+                .getUsername();
+    }
+
+    @Transactional
+    public void delete(Long id) throws IOException {
+        Comment comment = commentRepository.findById(id).orElseThrow(() -> new RuntimeException("no such comment"));
+        if (comment.getImage() != null) {
+            Image image = comment.getImage();
+            cloudinaryService.deleteImage(image);
+            imageRepository.delete(image);
+        }
+        comment.setAuthor(null);
+        comment.setContents("[DELETED]");
+        commentRepository.save(comment);
     }
 }

@@ -1,20 +1,22 @@
 package com.example.grouperapi.model.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
 
 @Data
-@NoArgsConstructor @Entity
+@NoArgsConstructor
+@Entity
+@ToString
 public abstract class Comment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.REMOVE)
     private User author;
     @Column(nullable = false)
     private Instant created;
@@ -23,6 +25,6 @@ public abstract class Comment {
     @Lob
     @Column(nullable = false)
     String contents;
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Reply> replies;
 }

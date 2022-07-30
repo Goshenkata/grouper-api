@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import javax.transaction.Transactional;
+
 @AllArgsConstructor
 @Component
 public class DBInit implements CommandLineRunner {
@@ -17,6 +19,7 @@ public class DBInit implements CommandLineRunner {
     private final CommentService commentService;
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
         roleService.seedRoles();
         userService.seedUsers();

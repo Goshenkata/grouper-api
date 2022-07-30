@@ -6,6 +6,7 @@ import com.example.grouperapi.model.dto.PostFeedDTO;
 import com.example.grouperapi.model.dto.SortType;
 import com.example.grouperapi.model.entities.Image;
 import com.example.grouperapi.model.entities.Post;
+import com.example.grouperapi.model.entities.PostComment;
 import com.example.grouperapi.model.entities.enums.PostType;
 import com.example.grouperapi.repositories.CommentRepository;
 import com.example.grouperapi.repositories.ImageRepository;
@@ -33,7 +34,7 @@ import java.util.Optional;
 public class PostService {
 
     private PostRepository postRepository;
-    private CommentRepository commentRepository;
+    private CommentService commentService;
     private UserService userService;
     private ImageRepository imageRepository;
     private GroupService groupService;
@@ -301,7 +302,10 @@ public class PostService {
     @Transactional
     public void delete(Long id) throws IOException {
         Post post = postRepository.getById(id);
-        commentRepository.deleteAll(post.getComments());
+        List<PostComment> comments = post.getComments();
+        for (PostComment comment : comments) {
+            commentService.delete(comment.getId());
+        }
         if (post.getImage() != null) {
             cloudinaryService.deleteImage(post.getImage());
             imageRepository.delete(post.getImage());
