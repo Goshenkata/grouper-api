@@ -304,7 +304,7 @@ public class PostService {
         Post post = postRepository.getById(id);
         List<PostComment> comments = post.getComments();
         for (PostComment comment : comments) {
-            commentService.delete(comment.getId());
+            commentService.deleteAll(comment);
         }
         if (post.getImage() != null) {
             cloudinaryService.deleteImage(post.getImage());

@@ -195,12 +195,27 @@ public class CommentService {
                 .getUsername();
     }
 
+    public void deleteAll(Comment comment) throws IOException {
+        comment.setAuthor(null);
+        if (comment.getImage() != null) {
+            Image image = comment.getImage();
+            cloudinaryService.deleteImage(image);
+            comment.setImage(null);
+            imageRepository.delete(image);
+        }
+        for (Reply reply : comment.getReplies()) {
+            deleteAll(reply);
+        }
+
+        commentRepository.delete(comment);
+    }
     @Transactional
     public void delete(Long id) throws IOException {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new RuntimeException("no such comment"));
         if (comment.getImage() != null) {
             Image image = comment.getImage();
             cloudinaryService.deleteImage(image);
+            comment.setImage(null);
             imageRepository.delete(image);
         }
         comment.setAuthor(null);
