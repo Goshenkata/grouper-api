@@ -21,5 +21,5 @@ public class Image {
     @OneToOne(mappedBy = "image")
     private Comment comment;
     @OneToOne(mappedBy = "pfp")
-    private User user;
+    private UserEntity user;
 }

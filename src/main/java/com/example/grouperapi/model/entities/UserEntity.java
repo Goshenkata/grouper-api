@@ -1,6 +1,5 @@
 package com.example.grouperapi.model.entities;
 
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,7 +10,7 @@ import java.util.List;
 @Entity
 @Data
 @NoArgsConstructor
-public class User {
+public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

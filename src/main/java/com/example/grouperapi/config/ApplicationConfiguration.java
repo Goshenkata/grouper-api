@@ -7,22 +7,18 @@ import com.example.grouperapi.model.dto.ObjectSearchReturnDTO;
 import com.example.grouperapi.model.dto.PostFeedDTO;
 import com.example.grouperapi.model.dto.UserInfoDTO;
 import com.example.grouperapi.model.entities.Post;
-import com.example.grouperapi.model.entities.User;
+import com.example.grouperapi.model.entities.UserEntity;
 import io.swagger.v3.oas.models.OpenAPI;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import lombok.AllArgsConstructor;
-import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
-import org.modelmapper.TypeMap;
-import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Collection;
 import java.util.Map;
 
 @Configuration
@@ -47,14 +43,14 @@ public class ApplicationConfiguration {
                         using(new PostCommentsListToPostCount()).map(source.getComments(), destination.getCommentCount());
                     }
                 });
-        mapper.typeMap(User.class, ObjectSearchReturnDTO.class)
+        mapper.typeMap(UserEntity.class, ObjectSearchReturnDTO.class)
                 .addMapping(source -> source.getPfp().getUrl(), ObjectSearchReturnDTO::setImageUrl)
-                .addMapping(User::getUsername, ObjectSearchReturnDTO::setName);
+                .addMapping(UserEntity::getUsername, ObjectSearchReturnDTO::setName);
 
-        mapper.typeMap(User.class, UserInfoDTO.class)
+        mapper.typeMap(UserEntity.class, UserInfoDTO.class)
                 .addMapping(source -> source.getPfp().getUrl(), UserInfoDTO::setImageUrl)
-                .addMapping(User::getUsername, UserInfoDTO::setName)
-                .addMapping(User::getDescription, UserInfoDTO::setDescription);
+                .addMapping(UserEntity::getUsername, UserInfoDTO::setName)
+                .addMapping(UserEntity::getDescription, UserInfoDTO::setDescription);
         return mapper;
     }
 

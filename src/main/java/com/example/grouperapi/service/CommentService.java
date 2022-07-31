@@ -7,7 +7,6 @@ import com.example.grouperapi.repositories.CommentRepository;
 import com.example.grouperapi.repositories.ImageRepository;
 import com.example.grouperapi.repositories.PostRepository;
 import lombok.AllArgsConstructor;
-import org.springframework.data.repository.cdi.Eager;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -29,7 +28,7 @@ public class CommentService {
     public void addComment(AddCommentDTO addCommentDTO, String username) throws IOException {
         if (addCommentDTO.getResponseType() == ResponseType.POST) {
             PostComment postComment = new PostComment();
-            User author = userService.getUserByUsername(username);
+            UserEntity author = userService.getUserByUsername(username);
             postComment.setAuthor(author);
             postComment.setContents(addCommentDTO.getContent());
             if (!(addCommentDTO.getImage() == null)) {
@@ -44,7 +43,7 @@ public class CommentService {
             postRepository.save(post);
         } else if (addCommentDTO.getResponseType() == ResponseType.COMMENT) {
             Reply reply = new Reply();
-            User author = userService.getUserByUsername(username);
+            UserEntity author = userService.getUserByUsername(username);
             reply.setAuthor(author);
             reply.setContents(addCommentDTO.getContent());
             if (addCommentDTO.getImage() != null) {

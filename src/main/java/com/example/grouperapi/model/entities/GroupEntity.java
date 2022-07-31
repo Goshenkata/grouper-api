@@ -1,6 +1,5 @@
 package com.example.grouperapi.model.entities;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

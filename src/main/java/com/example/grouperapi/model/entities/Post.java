@@ -22,7 +22,7 @@ public class Post {
     @Column(nullable = false)
     private Instant  created;
     @ManyToOne
-    private User author;
+    private UserEntity author;
     @Column(nullable = false)
     String title;
     @OneToOne

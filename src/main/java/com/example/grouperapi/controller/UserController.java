@@ -6,10 +6,9 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.auth0.jwt.interfaces.JWTVerifier;
 import com.example.grouperapi.model.dto.*;
 import com.example.grouperapi.model.entities.Role;
-import com.example.grouperapi.model.entities.User;
+import com.example.grouperapi.model.entities.UserEntity;
 import com.example.grouperapi.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jdk.jfr.Description;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -46,7 +45,7 @@ public class UserController {
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegistrationDTO registrationDTO,
                                                BindingResult bindingResult) {
         //check if the username is taken, and if not register the new user
-        Optional<User> userOptional = userService.registerUser(registrationDTO);
+        Optional<UserEntity> userOptional = userService.registerUser(registrationDTO);
         if (userOptional.isEmpty()) {
             return ResponseEntity.badRequest().body("username or email are already taken");
         }
@@ -73,7 +72,7 @@ public class UserController {
                 JWTVerifier verifier = JWT.require(algorithm).build();
                 DecodedJWT decodedJWT = verifier.verify(refreshToken);
                 String username = decodedJWT.getSubject();
-                User user = userService.getUserByUsername(username);
+                UserEntity user = userService.getUserByUsername(username);
                 Date exp = new Date(System.currentTimeMillis() + ACCESS_TOKEN_EXPRATION);
                 String accessToken = JWT.create()
                         .withSubject(user.getUsername())

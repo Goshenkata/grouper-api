@@ -17,7 +17,7 @@ public abstract class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @ManyToOne(cascade = CascadeType.REMOVE)
-    private User author;
+    private UserEntity author;
     @Column(nullable = false)
     private Instant created;
     @OneToOne

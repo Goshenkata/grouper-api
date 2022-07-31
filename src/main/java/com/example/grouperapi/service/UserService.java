@@ -3,7 +3,7 @@ package com.example.grouperapi.service;
 import com.example.grouperapi.model.dto.*;
 import com.example.grouperapi.model.entities.Image;
 import com.example.grouperapi.model.entities.Role;
-import com.example.grouperapi.model.entities.User;
+import com.example.grouperapi.model.entities.UserEntity;
 import com.example.grouperapi.repositories.ImageRepository;
 import com.example.grouperapi.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,6 @@ import me.xdrop.fuzzywuzzy.model.BoundExtractedResult;
 import org.modelmapper.ModelMapper;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -47,7 +46,7 @@ public class UserService implements UserDetailsService {
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         //get the user or throw an exception if not found
-        User user = userRepository.findByUsername(username).orElseThrow(() -> {
+        UserEntity user = userRepository.findByUsername(username).orElseThrow(() -> {
             log.error("user {} not found in the database", username);
             throw new UsernameNotFoundException("user not found in the database");
         });
@@ -65,7 +64,7 @@ public class UserService implements UserDetailsService {
             for (int i = 0; i < 10; i++) {
                 registerUser(new RegistrationDTO("user" + i, "user@user.bg" + i, "UserUser@" + i, "user" + i, true));
             }
-            User admin = new User();
+            UserEntity admin = new UserEntity();
             Image image = new Image();
             admin.setUsername("admin");
             admin.setEmail("admin@admin.bg");
@@ -86,8 +85,8 @@ public class UserService implements UserDetailsService {
         }
     }
 
-    public Optional<User> registerUser(RegistrationDTO registrationDTO) {
-        User user = modelMapper.map(registrationDTO, User.class);
+    public Optional<UserEntity> registerUser(RegistrationDTO registrationDTO) {
+        UserEntity user = modelMapper.map(registrationDTO, UserEntity.class);
         user.setPassword(passwordEncoder.encode(registrationDTO.getPassword()));
         if (userRepository.existsByUsername(user.getUsername())) {
             log.warn("user {} already exists", user.getUsername());
@@ -103,7 +102,7 @@ public class UserService implements UserDetailsService {
         return Optional.of(user);
     }
 
-    public User getUserByUsername(String username) {
+    public UserEntity getUserByUsername(String username) {
         return userRepository
                 .findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("user with username: " + username + " not found"));
@@ -112,7 +111,7 @@ public class UserService implements UserDetailsService {
 
     @GetMapping("/profile-widget")
     public ProfileWidgetDTO getProfileWidget(String name) {
-        User userByUsername = this.getUserByUsername(name);
+        UserEntity userByUsername = this.getUserByUsername(name);
         return modelMapper.map(userByUsername, ProfileWidgetDTO.class);
     }
 
@@ -146,7 +145,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void removePfp(String name) throws IOException {
-        User user = getUserByUsername(name);
+        UserEntity user = getUserByUsername(name);
         if (user.getPfp() != null) {
             Image pfp = user.getPfp();
             cloudinaryService.deleteImage(pfp);
@@ -158,7 +157,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public void changePfp(MultipartFile multipartFile, String name) throws IOException {
-        User user = getUserByUsername(name);
+        UserEntity user = getUserByUsername(name);
         //todo delete
         if (user.getPfp() != null) {
             Image pfp = user.getPfp();
@@ -172,7 +171,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void changeDescription(String description, String name) {
-        User user = getUserByUsername(name);
+        UserEntity user = getUserByUsername(name);
         user.setDescription(description);
         userRepository.save(user);
     }
@@ -191,7 +190,7 @@ public class UserService implements UserDetailsService {
     }
 
     public void makeAdmin(String username) {
-        User user = getUserByUsername(username);
+        UserEntity user = getUserByUsername(username);
         if (!user.getRoles().contains(roleService.getAdminRole())) {
             user.getRoles().add(roleService.getAdminRole());
         }
