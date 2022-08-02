@@ -10,13 +10,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
 import java.io.IOException;
 import java.security.Principal;
 
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA;
 
 @RestController
 @RequestMapping("/api/comment")
