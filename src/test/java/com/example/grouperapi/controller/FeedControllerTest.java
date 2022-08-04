@@ -1,13 +1,9 @@
 package com.example.grouperapi.controller;
 
 import com.example.grouperapi.init.DBInit;
-import com.example.grouperapi.model.dto.GroupInfoDTO;
-import com.example.grouperapi.model.dto.PostFeedDTO;
 import com.example.grouperapi.model.entities.*;
 import com.example.grouperapi.model.entities.enums.PostType;
 import com.example.grouperapi.repositories.*;
-import com.google.gson.*;
-import org.junit.After;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
