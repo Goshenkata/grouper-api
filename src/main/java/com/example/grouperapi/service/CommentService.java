@@ -59,6 +59,7 @@ public class CommentService {
         }
     }
 
+    @Transactional
     public void seedComments() {
         if (commentRepository.count() == 0) {
             commentsLinux();

@@ -42,7 +42,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable();
-        //only for chrome testing
         http.headers().xssProtection().and().contentSecurityPolicy("script-src 'self'");
         http.sessionManagement().sessionCreationPolicy(STATELESS);
         http.authorizeRequests()
@@ -52,7 +51,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     }
-
 
 
     @Bean
