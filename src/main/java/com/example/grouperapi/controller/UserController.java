@@ -172,9 +172,8 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("roles/admin/{username}")
     public ResponseEntity makeAdmin(@PathVariable String username) {
-            userService.makeAdmin(username);
+        userService.makeAdmin(username);
         return ResponseEntity.ok().build();
     }
-
 
 }

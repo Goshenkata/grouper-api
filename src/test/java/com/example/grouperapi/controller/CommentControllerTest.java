@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -28,7 +27,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
-@WithMockUser("user1")
 class CommentControllerTest {
     @Autowired
     UserRepository userRepository;
@@ -55,6 +53,7 @@ class CommentControllerTest {
     //POST REPLY NEW
     @Test
     @Transactional
+    @WithMockUser("user1")
     void postCommentReply() throws Exception {
         mockMvc.perform(multipart("http://localhost:8080//api/comment/add")
                         .param("id", post.getId().toString())
@@ -68,6 +67,7 @@ class CommentControllerTest {
     }
 
     @Test
+    @WithMockUser("user1")
     void postInvalidReply() throws Exception {
         mockMvc.perform(multipart("http://localhost:8080//api/comment/add")
                         .param("id", post.getId().toString())
@@ -80,6 +80,7 @@ class CommentControllerTest {
     //COMMENT REPLY NEW
     @Test
     @Transactional
+    @WithMockUser("user1")
     void commentReply() throws Exception {
 
         PostComment postComment = new PostComment();
@@ -105,6 +106,7 @@ class CommentControllerTest {
 
     @Test
     @Transactional
+    @WithMockUser("user1")
     void invalidCommentReply() throws Exception {
 
         PostComment postComment = new PostComment();
@@ -127,6 +129,7 @@ class CommentControllerTest {
 
     @Test
     @Transactional
+    @WithMockUser("user1")
     void postAndDelete() throws Exception {
         mockMvc.perform(multipart("http://localhost:8080//api/comment/add")
                         .param("id", post.getId().toString())
@@ -211,6 +214,7 @@ class CommentControllerTest {
     //COMMENT REPLY
     @Test
     @Transactional
+    @WithMockUser("user1")
     void replyAndDelete() throws Exception {
 
         PostComment postComment = new PostComment();
@@ -345,7 +349,8 @@ class CommentControllerTest {
         return group;
     }
 
-    private UserEntity getUser() {
+    @Transactional
+    UserEntity getUser() {
         UserEntity user = new UserEntity();
         user.setUsername("user1");
         user.setPassword(passwordEncoder.encode("UserUser@1"));
