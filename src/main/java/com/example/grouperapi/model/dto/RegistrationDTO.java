@@ -13,7 +13,7 @@ public class RegistrationDTO implements Serializable {
     @NotNull(message = "username can't be null")
     @Size(min = 3, max = 32, message = "username must be between 3 and 32 characters long")
     private String username;
-    @NotNull(message = "email can'tbe null")
+    @NotNull(message = "email can't be null")
     @Email(message = "invalid email")
     private String email;
 // We would like our password to contain all of the following

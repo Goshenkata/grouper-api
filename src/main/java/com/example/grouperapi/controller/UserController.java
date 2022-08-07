@@ -1,35 +1,53 @@
 package com.example.grouperapi.controller;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.interfaces.DecodedJWT;
-import com.auth0.jwt.interfaces.JWTVerifier;
-import com.example.grouperapi.model.dto.*;
-import com.example.grouperapi.model.entities.Role;
-import com.example.grouperapi.model.entities.UserEntity;
-import com.example.grouperapi.service.UserService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.net.URI;
-import java.security.Principal;
-import java.util.*;
-
 import static com.example.grouperapi.filter.CustomAuthenticationFilter.ACCESS_TOKEN_EXPRATION;
 import static org.springframework.http.HttpHeaders.AUTHORIZATION;
 import static org.springframework.http.HttpStatus.FORBIDDEN;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import java.io.IOException;
+import java.net.URI;
+import java.security.Principal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.algorithms.Algorithm;
+import com.auth0.jwt.interfaces.DecodedJWT;
+import com.auth0.jwt.interfaces.JWTVerifier;
+import com.example.grouperapi.model.dto.DescriptionDTO;
+import com.example.grouperapi.model.dto.ProfileWidgetDTO;
+import com.example.grouperapi.model.dto.RegistrationDTO;
+import com.example.grouperapi.model.dto.RolesDTO;
+import com.example.grouperapi.model.dto.UserInfoDTO;
+import com.example.grouperapi.model.entities.Role;
+import com.example.grouperapi.model.entities.UserEntity;
+import com.example.grouperapi.service.UserService;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * Controller for handling action related to users and refreshing JWT tokens
@@ -43,16 +61,17 @@ public class UserController {
 
     @PostMapping("register")
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegistrationDTO registrationDTO,
-                                               BindingResult bindingResult) {
-        //check if the username is taken, and if not register the new user
-        Optional<UserEntity> userOptional = userService.registerUser(registrationDTO);
-        if (userOptional.isEmpty()) {
-            return ResponseEntity.badRequest().body("username or email are already taken");
+            BindingResult bindingResult) {
+
+        // check if any of the fields are invalid, fronend validation for this
+        if (bindingResult.hasErrors()) {
+            return ResponseEntity.badRequest().body(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }
 
-        //check if any of the fields are invalid, fronend validation for this
-        if (bindingResult.hasErrors()) {
-            return ResponseEntity.badRequest().body("bad input");
+        Optional<UserEntity> userOptional = userService.registerUser(registrationDTO);
+
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.badRequest().body("username or email are already taken");
         }
 
         URI uri = URI.create(ServletUriComponentsBuilder
@@ -119,7 +138,7 @@ public class UserController {
     @PatchMapping("pfp")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity pfp(@RequestParam MultipartFile pfp,
-                              Principal principal) throws IOException {
+            Principal principal) throws IOException {
         userService.changePfp(pfp, principal.getName());
         return ResponseEntity.ok().build();
     }
@@ -131,11 +150,10 @@ public class UserController {
         return ResponseEntity.ok().build();
     }
 
-
     @PatchMapping("description")
     @PreAuthorize("hasRole('USER')")
     public ResponseEntity description(@RequestBody DescriptionDTO description,
-                                      Principal principal) throws IOException {
+            Principal principal) throws IOException {
         userService.changeDescription(description.getDescription(), principal.getName());
         return ResponseEntity.ok().build();
     }
@@ -146,7 +164,6 @@ public class UserController {
         return ResponseEntity.ok(userService.getRolesArr(principal.getName()));
     }
 
-
     @GetMapping("roles/{username}")
     public ResponseEntity<RolesDTO> roles(@PathVariable String username) {
         return ResponseEntity.ok(userService.getRolesArr(username));
@@ -155,8 +172,9 @@ public class UserController {
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping("roles/admin/{username}")
     public ResponseEntity makeAdmin(@PathVariable String username) {
-        userService.makeAdmin(username);
+            userService.makeAdmin(username);
         return ResponseEntity.ok().build();
     }
+
 
 }
