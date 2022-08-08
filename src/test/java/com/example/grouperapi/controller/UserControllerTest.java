@@ -36,6 +36,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 
 import lombok.extern.slf4j.Slf4j;
@@ -43,6 +44,7 @@ import lombok.extern.slf4j.Slf4j;
 @SpringBootTest
 @AutoConfigureMockMvc
 @Slf4j
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_CLASS)
 public class UserControllerTest {
     @Autowired
     PasswordEncoder passwordEncoder;
