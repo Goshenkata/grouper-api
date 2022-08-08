@@ -1,5 +1,8 @@
 package com.example.grouperapi.config;
 
+import com.blueconic.browscap.ParseException;
+import com.blueconic.browscap.UserAgentParser;
+import com.blueconic.browscap.UserAgentService;
 import com.cloudinary.Cloudinary;
 import com.example.grouperapi.converters.PostCommentsListToPostCount;
 import com.example.grouperapi.model.dto.FullPostInfoDTO;
@@ -20,6 +23,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Configuration
@@ -34,14 +38,16 @@ public class ApplicationConfiguration {
                 .addMappings(new PropertyMap<>() {
                     @Override
                     protected void configure() {
-                        using(new PostCommentsListToPostCount()).map(source.getComments(), destination.getCommentCount());
+                        using(new PostCommentsListToPostCount()).map(source.getComments(),
+                                destination.getCommentCount());
                     }
                 });
         mapper.typeMap(Post.class, FullPostInfoDTO.class)
                 .addMappings(new PropertyMap<>() {
                     @Override
                     protected void configure() {
-                        using(new PostCommentsListToPostCount()).map(source.getComments(), destination.getCommentCount());
+                        using(new PostCommentsListToPostCount()).map(source.getComments(),
+                                destination.getCommentCount());
                     }
                 });
         mapper.typeMap(UserEntity.class, ObjectSearchReturnDTO.class)
@@ -66,18 +72,23 @@ public class ApplicationConfiguration {
                 Map.of(
                         "cloud_name", cloudinaryConfig.getCloudName(),
                         "api_key", cloudinaryConfig.getApiKey(),
-                        "api_secret", cloudinaryConfig.getApiSecret()
-                )
-        );
+                        "api_secret", cloudinaryConfig.getApiSecret()));
     }
 
     @Bean
     public OpenAPI springShopOpenAPI() {
         return new OpenAPI()
                 .info(new Info().title("Grouper API")
-                        .description("Spring backend for Grouper, a social media centered around groups and the Grouper fish ")
+                        .description(
+                                "Spring backend for Grouper, a social media centered around groups and the Grouper fish ")
                         .version("dev")
-                        .license(new License().name("GNU Affero General Public License v3.0").url("https://www.gnu.org/licenses/agpl-3.0.en.html")));
+                        .license(new License().name("GNU Affero General Public License v3.0")
+                                .url("https://www.gnu.org/licenses/agpl-3.0.en.html")));
+    }
+
+    @Bean
+    public UserAgentParser parser() throws IOException, ParseException {
+        return new UserAgentService().loadParser();
     }
 
 }
