@@ -282,8 +282,8 @@ public class PostService {
         Post post = new Post();
         post.setPostType(PostType.TEXT);
         post.setCreated(Instant.now());
-        post.setAuthor(userService.getUserByUsername(authorUsername));
-        post.setGroup(groupService.getGroupByName(groupName));
+            post.setAuthor(userService.getUserByUsername(authorUsername));
+            post.setGroup(groupService.getGroupByName(groupName));
         post.setTitle(title);
         post.setContent(content);
         post.setComments(new ArrayList<>());
