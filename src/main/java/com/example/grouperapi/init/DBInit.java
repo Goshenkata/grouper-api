@@ -17,6 +17,7 @@ public class DBInit implements CommandLineRunner {
     private final GroupService groupService;
     private final PostService postService;
     private final CommentService commentService;
+    private final ChatService chatService;
 
     @Override
     @Transactional
@@ -26,6 +27,7 @@ public class DBInit implements CommandLineRunner {
         groupService.seedGroups();
         postService.seedPosts();
         commentService.seedComments();
+        chatService.seedChats();
     }
 
 

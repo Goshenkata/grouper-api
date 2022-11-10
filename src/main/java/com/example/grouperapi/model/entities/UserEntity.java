@@ -28,6 +28,8 @@ public class UserEntity {
     List<Post> posts;
 //    @ManyToMany(mappedBy = "members")
 //    List<GroupEntity> groups;
+    @ManyToMany(mappedBy = "users")
+	private List<Chat> chats;
     @OneToOne
     private Image pfp;
 }
