@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.EmptyStackException;
 import java.util.List;
 
 @Service
@@ -21,10 +22,12 @@ public class ChatService {
     private final MessageRepository messageRepository;
     private final UserService userService;
     public void seedChats() {
-        log.info("initialising chats");
-        createUserAdminChat();
-        createUserUser1Chat();
-        log.info("chats initialised");
+        if(messageRepository.count() == 0) {
+            log.info("initialising chats");
+            createUserAdminChat();
+            createUserUser1Chat();
+            log.info("chats initialised");
+        }
     }
 
     private void createUserUser1Chat() {
@@ -36,6 +39,7 @@ public class ChatService {
 
         Chat chat = new Chat();
         chat.setUsers(users);
+        chat.setName(null);
 
         List<Message> messages = seedMessagesUserUser1(user, user1);
         chat.setMessages(messages);
@@ -64,6 +68,7 @@ public class ChatService {
 
         Chat chat = new Chat();
         chat.setUsers(users);
+        chat.setName(null);
 
         List<Message> messages = seedMessagesUserAdmin(user, admin);
         chat.setMessages(messages);
@@ -87,5 +92,9 @@ public class ChatService {
         message.setAuthor(author);
         messageRepository.save(message);
         return message;
+    }
+
+    public List<Message> getChat(long id, int page) {
+        throw new RuntimeException("TODO");
     }
 }

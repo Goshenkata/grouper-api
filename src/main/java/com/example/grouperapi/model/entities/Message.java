@@ -2,6 +2,7 @@ package com.example.grouperapi.model.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.time.Instant;
@@ -9,6 +10,7 @@ import java.time.Instant;
 @Entity
 @NoArgsConstructor
 @Data
+@ToString
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
