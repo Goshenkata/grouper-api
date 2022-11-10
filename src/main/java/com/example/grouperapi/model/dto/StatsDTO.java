@@ -11,7 +11,6 @@ import java.util.Map;
 public class StatsDTO {
     private Long totalRequest;
     private Long requestsInLastDay;
-        private List<PercentageDTO> devicePercentages;
-        private List<PercentageDTO> browserPercentages;
         private List<PercentageDTO> platformPercentages;
+        private List<PercentageDTO> browserPercentages;
 }

@@ -52,9 +52,9 @@ public class PostService {
                     """
                                 Something I was thinking about, but not really able to find an answer for with regards to the cat command.
                             Say you have a txt file, that is 100mb in size, and you cat that file.
-                                                        
+
                             cat sample.txt
-                                                        
+
                             Does that file get read into memory first, then outputed line by line. So conceivable it would utilize 100mb of memory until cat finishes, and then memory is freed?
                             Or does it handle it some other way?
                             Thanks!
@@ -106,7 +106,7 @@ public class PostService {
                              I just discovered it and I love it, till now I had to use picom, but it does not have window animations like kwin, but installing kwin pulls a lot other things unlike compiz.
                             Compiz seems to have a hella lot of bells and whistles along with animations that are actually usable, looking at the arch AUR repos, both 0.8 an 0.8 hasn't been updated since quite some time.
                             I get that there are extensions for gnome to do the same. but compiz can be standalone window manager for people like me and there are a lot of people like me who use stuff like bspwm, dwm, openbox, etc.
-                            Why do you think compiz was forced to the backstage these days? 
+                            Why do you think compiz was forced to the backstage these days?
                                                         """);
 
             //post 6
@@ -116,14 +116,14 @@ public class PostService {
                     "Any Suggested Python Library / Specific Expertise [Crop Classification from Satellite Images]",
                     """
                             I'm competing in a hackathon that requires me to classify types of crop based on satellite images. I already have some background in machine learning, and they suggest me to have these knowledges beforehand
-                                                        
+
                             - Data Analytics
                             - Image Processing / OpenCV
                             - Artificial Intelligence / Machine Learning / TensorFlow
                             - Satellite / GIS, Geospatial Technology, Remote Sensing
-                                                        
+
                             ---------------------------------------------------------------------------------------------
-                                                        
+
                             Are there any more python libraries / specific topics I need to know more to do well in this hackathon?
                             [OR are there any of their suggested knowledges I shouldn't focus on]""");
 
@@ -143,7 +143,7 @@ public class PostService {
                     "programming",
                     "Should copy-paste code be avoided?",
                     """
-                            So I graduated with cs bachelor's degree last year but am still working on my personal project to get a job. I'm Korean and most Korean companies require Spring Framework experience for entry level java developer roles so I'm making a webapp using Springboot framework. Anyway, I'm almost done with the project but I didn't come up with all the code by myself but referenced many websites and books, then borrowed some codes from various sources and modified them to run on my project. Idk if I should feel ashamed for this or it's a common practice among software engineers (web developers). I understand the logics behind the code I referenced thou. What's your opinons? 
+                            So I graduated with cs bachelor's degree last year but am still working on my personal project to get a job. I'm Korean and most Korean companies require Spring Framework experience for entry level java developer roles so I'm making a webapp using Springboot framework. Anyway, I'm almost done with the project but I didn't come up with all the code by myself but referenced many websites and books, then borrowed some codes from various sources and modified them to run on my project. Idk if I should feel ashamed for this or it's a common practice among software engineers (web developers). I understand the logics behind the code I referenced thou. What's your opinons?
                             """
             );
 
@@ -199,13 +199,13 @@ public class PostService {
                     "BREAKING NEWS!!! CONSERVATIVE UBUNTU USERS: THERE ARE LIBERALS INVADING YOUR COMPUTER THROUGH APT!!!!",
                     """
                             AGENDA ALERT!!!:: there are liberals invading your conservative Ubuntu installation through apt packages! Luckily, these are easily identified since all of their package names start with "lib", a shortening of "liberal" (not a very smart method of hiding your agenda...). Here's a step by step guide on cleaning your PC of liberal malware.
-                                                        
+
                             Step 1: Open a terminal.
                             Step 2: Type the command "sudo apt purge lib*" and press enter.
                             Step 3: Enter your password, allow the package manager to clean your system of liberals.
                             Step 4: Reboot into your brand new liberal-free system.
                             Step 5: Enjoy!
-                                                        
+
                             There you go, your brand-new liberal-free Ubuntu system! It should feel faster because there's no more dumb liberals sapping your CPU's intelligence anymore. No more CIA Obama madness on your trusty Pentium rig.
                                                         """
             );

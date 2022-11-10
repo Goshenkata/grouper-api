@@ -4,6 +4,8 @@ import com.example.grouperapi.filter.CustomAuthenticationFilter;
 import com.example.grouperapi.filter.CustomAuthorizationFilter;
 import com.example.grouperapi.service.UserService;
 import lombok.RequiredArgsConstructor;
+import ua_parser.Parser;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -30,9 +32,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private final PasswordEncoder passwordEncoder;
     private final UserService userService;
 
-
-
-
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(userDetailsService)
@@ -48,8 +47,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers("/login", "/api/user/register", "/api/user/refreshToken").permitAll();
         http.addFilter(new CustomAuthenticationFilter(authenticationManagerBean()));
         http.addFilterBefore(new CustomAuthorizationFilter(), UsernamePasswordAuthenticationFilter.class);
-
-
     }
 
 

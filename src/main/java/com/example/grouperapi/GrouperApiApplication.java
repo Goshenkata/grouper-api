@@ -6,6 +6,8 @@ import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
+import java.util.Arrays;
+
 @EnableWebMvc
 @EnableCaching
 @EnableScheduling
@@ -15,5 +17,4 @@ public class GrouperApiApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(GrouperApiApplication.class, args);
 	}
-
 }

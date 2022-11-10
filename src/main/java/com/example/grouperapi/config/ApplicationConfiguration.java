@@ -1,8 +1,7 @@
 package com.example.grouperapi.config;
 
-import com.blueconic.browscap.ParseException;
-import com.blueconic.browscap.UserAgentParser;
-import com.blueconic.browscap.UserAgentService;
+import java.util.Map;
+
 import com.cloudinary.Cloudinary;
 import com.example.grouperapi.converters.PostCommentsListToPostCount;
 import com.example.grouperapi.model.dto.FullPostInfoDTO;
@@ -11,11 +10,7 @@ import com.example.grouperapi.model.dto.PostFeedDTO;
 import com.example.grouperapi.model.dto.UserInfoDTO;
 import com.example.grouperapi.model.entities.Post;
 import com.example.grouperapi.model.entities.UserEntity;
-import io.swagger.v3.oas.models.OpenAPI;
-import io.swagger.v3.oas.models.info.Info;
-import io.swagger.v3.oas.models.info.License;
-import lombok.AllArgsConstructor;
-import nonapi.io.github.classgraph.json.JSONUtils;
+
 import org.modelmapper.ModelMapper;
 import org.modelmapper.PropertyMap;
 import org.springframework.context.annotation.Bean;
@@ -23,8 +18,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.io.IOException;
-import java.util.Map;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import lombok.AllArgsConstructor;
+import ua_parser.Parser;
 
 @Configuration
 @AllArgsConstructor
@@ -86,9 +84,11 @@ public class ApplicationConfiguration {
                                 .url("https://www.gnu.org/licenses/agpl-3.0.en.html")));
     }
 
-    @Bean
-    public UserAgentParser parser() throws IOException, ParseException {
-        return new UserAgentService().loadParser();
-    }
+
+	@Bean
+	public Parser uaParser() {
+		return new Parser();
+	}
+
 
 }

@@ -14,11 +14,8 @@ public interface StatsRepository extends JpaRepository<UserStats, Long> {
     Long countAllByMomentAfter(Instant moment);
     @Query("SELECT DISTINCT s.browser FROM UserStats s")
     List<String> getAllByDisctinctBrowser();
-    @Query("SELECT DISTINCT s.device FROM UserStats s")
-    List<String> getAllByDisctinctDevice();
     @Query("SELECT DISTINCT s.platform FROM UserStats s")
     List<String> getAllByDisctinctPlatform();
-    Long countAllByDevice(String device);
     Long countAllByBrowser(String browser);
     Long countAllByPlatform(String platform);
 }

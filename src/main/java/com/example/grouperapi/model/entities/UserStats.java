@@ -16,6 +16,5 @@ public class UserStats {
     @Enumerated(EnumType.STRING)
     private UserType userType;
     private String browser;
-    private String device;
     private String platform;
 }

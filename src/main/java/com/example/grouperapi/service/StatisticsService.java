@@ -29,15 +29,6 @@ public class StatisticsService {
         }
         statsDTO.setBrowserPercentages(browserPercentages);
 
-        //devices
-        List<String> devices = statsRepository.getAllByDisctinctDevice();
-        List<PercentageDTO> devicePercentages = new ArrayList<>();
-        for (String device : devices) {
-            Long countAllByDevice = statsRepository.countAllByDevice(device);
-            devicePercentages.add(new PercentageDTO(device, countAllByDevice));
-        }
-        statsDTO.setDevicePercentages(devicePercentages);
-
         //platform
         List<String> platforms = statsRepository.getAllByDisctinctPlatform();
         List<PercentageDTO> platformPercentages = new ArrayList<>();
@@ -46,6 +37,7 @@ public class StatisticsService {
             platformPercentages.add(new PercentageDTO(platform, countAllByPlatform));
         }
         statsDTO.setPlatformPercentages(platformPercentages);
+
         return statsDTO;
     }
 }
