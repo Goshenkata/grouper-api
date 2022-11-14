@@ -1,6 +1,7 @@
 package com.example.grouperapi.controller;
 
 import com.example.grouperapi.model.dto.MessageDTO;
+import com.example.grouperapi.model.dto.UserChatsDTO;
 import com.example.grouperapi.service.ChatService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -32,6 +33,12 @@ public class ChatController {
         } else {
             return ResponseEntity.status(403).build();
         }
+    }
+
+    @GetMapping("/all")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<List<UserChatsDTO>> getAllChatInfo(Principal principal) {
+        return ResponseEntity.ok(chatService.getChatsForUser(principal.getName()));
     }
 
 }

@@ -1,15 +1,16 @@
 package com.example.grouperapi.model.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.Instant;
-import java.util.List;
 
 @NoArgsConstructor
 @Data
-public class ChatDTO {
-    private List<UserInfoDTO> participants;
-    private List<MessageDTO> messages;
+public class UserChatsDTO {
     private String name;
+    private Instant lastMessageTime;
+    private String lastMessage;
+    private UserInfoDTO lastMessageAuthor;
 }

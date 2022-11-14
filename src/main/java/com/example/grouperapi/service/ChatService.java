@@ -1,6 +1,8 @@
 package com.example.grouperapi.service;
 
 import com.example.grouperapi.model.dto.MessageDTO;
+import com.example.grouperapi.model.dto.UserChatsDTO;
+import com.example.grouperapi.model.dto.UserInfoDTO;
 import com.example.grouperapi.model.entities.Chat;
 import com.example.grouperapi.model.entities.Message;
 import com.example.grouperapi.model.entities.UserEntity;
@@ -11,11 +13,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -105,7 +109,7 @@ public class ChatService {
 
     public Optional<List<MessageDTO>> getMessages(long id, int page) {
         Optional<Chat> chat = chatRepository.findById(id);
-        if(chat.isEmpty()) {
+        if (chat.isEmpty()) {
             return Optional.empty();
         } else {
             return Optional.of(messageRepository
@@ -123,5 +127,41 @@ public class ChatService {
             UserEntity principal = userService.getUserByUsername(username);
             return chat.get().getUsers().contains(principal);
         }
+    }
+
+    public List<UserChatsDTO> getChatsForUser(String name) {
+        UserEntity user = userService.getUserByUsername(name);
+        return chatRepository.findAllByOrderByLastMessageTime()
+                .stream()
+                .filter(chat -> chat.getUsers().contains(user))
+                .map(chat -> mapChatToUserChatDTO(chat, name))
+                .toList();
+    }
+    private UserChatsDTO mapChatToUserChatDTO(Chat chat, String principal) {
+        UserChatsDTO userChatsDTO = new UserChatsDTO();
+        Message lastMessage = chat.getMessages().get(chat.getMessages().size() - 1);
+        userChatsDTO.setLastMessage(lastMessage.getMessage());
+        userChatsDTO.setLastMessageAuthor(modelMapper.map(lastMessage.getAuthor(), UserInfoDTO.class));
+        userChatsDTO.setLastMessageTime(chat.getLastMessageTime());
+        // if the chat is not named, the name is set by the following logic
+        if (chat.getName() == null) {
+            // if the participants are just 2 (DM) then it should simply be the name of the other participant,
+            // otherwise it should be named after all the participants
+            String name;
+            List<UserEntity> users = chat.getUsers();
+            if (chat.getUsers().size() == 2) {
+                if (users.get(0).getUsername().equals(principal)) {
+                    name = users.get(0).getUsername();
+                } else {
+                    name = users.get(1).getUsername();
+                }
+            } else {
+                name = String.join(", ",users.stream().map(UserEntity::getUsername).toList());
+            }
+            userChatsDTO.setName(name);
+        } else {
+            userChatsDTO.setName(chat.getName());
+        }
+        return userChatsDTO;
     }
 }
