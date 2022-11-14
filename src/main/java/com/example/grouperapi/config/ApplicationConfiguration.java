@@ -4,10 +4,7 @@ import java.util.Map;
 
 import com.cloudinary.Cloudinary;
 import com.example.grouperapi.converters.PostCommentsListToPostCount;
-import com.example.grouperapi.model.dto.FullPostInfoDTO;
-import com.example.grouperapi.model.dto.ObjectSearchReturnDTO;
-import com.example.grouperapi.model.dto.PostFeedDTO;
-import com.example.grouperapi.model.dto.UserInfoDTO;
+import com.example.grouperapi.model.dto.*;
 import com.example.grouperapi.model.entities.Post;
 import com.example.grouperapi.model.entities.UserEntity;
 
@@ -85,10 +82,10 @@ public class ApplicationConfiguration {
     }
 
 
-	@Bean
-	public Parser uaParser() {
-		return new Parser();
-	}
+    @Bean
+    public Parser uaParser() {
+        return new Parser();
+    }
 
 
 }

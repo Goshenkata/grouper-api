@@ -63,7 +63,7 @@ public class UserController {
     public ResponseEntity<String> registerUser(@Valid @RequestBody RegistrationDTO registrationDTO,
             BindingResult bindingResult) {
 
-        // check if any of the fields are invalid, fronend validation for this
+        // check if any of the fields are invalid, frontend validation for this
         if (bindingResult.hasErrors()) {
             return ResponseEntity.badRequest().body(bindingResult.getAllErrors().get(0).getDefaultMessage());
         }

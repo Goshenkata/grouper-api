@@ -22,7 +22,8 @@ public class Chat {
     joinColumns = @JoinColumn(name = "chats_id"),
     inverseJoinColumns = @JoinColumn(name = "user_entity_id"))
     private List<UserEntity> users;
-    @OneToMany
+    @OneToMany(mappedBy = "chat")
+    @OrderBy("timeSent")
     private List<Message> messages;
     Instant lastMessageTime;
     @Column(nullable = true)

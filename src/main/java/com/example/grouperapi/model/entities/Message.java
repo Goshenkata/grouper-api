@@ -21,4 +21,6 @@ public class Message {
     private Instant timeSent;
     @ManyToOne
     private UserEntity author;
+    @ManyToOne
+    private Chat chat;
 }
