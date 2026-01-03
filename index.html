@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>DryScan Duplicates</title>
+  <link id="hljs-theme" rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/styles/line-numbers.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
+    :root {
+      --bg: #0b1021;
+      --panel: #0f162f;
+      --card: #121b38;
+      --border: #1c284a;
+      --muted: #9aa6c0;
+      --accent: #5eead4;
+      --accent-2: #60a5fa;
+      --accent-3: #f472b6;
+      --shadow: 0 24px 60px rgba(0,0,0,0.35);
+      --class: #f59e0b;
+      --function: #22d3ee;
+      --block: #a855f7;
+      --text: #e6edf7;
+      --code-bg: #0a0f1e;
+      --excellent: #10b981;
+      --good: #22d3ee;
+      --fair: #f59e0b;
+      --poor: #f97316;
+      --critical: #ef4444;
+    }
+    [data-theme='light'] {
+      --bg: #f7f9fc;
+      --panel: #ffffff;
+      --card: #ffffff;
+      --border: #d9e2ec;
+      --muted: #667799;
+      --accent: #2563eb;
+      --accent-2: #0ea5e9;
+      --accent-3: #ec4899;
+      --shadow: 0 16px 40px rgba(15,23,42,0.15);
+      --class: #d97706;
+      --function: #0ea5e9;
+      --block: #8b5cf6;
+      --text: #0f172a;
+      --code-bg: #f5f7fb;
+      --excellent: #059669;
+      --good: #0891b2;
+      --fair: #d97706;
+      --poor: #ea580c;
+      --critical: #dc2626;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: radial-gradient(circle at 20% 20%, rgba(96,165,250,0.12), transparent 30%),
+                  radial-gradient(circle at 75% 10%, rgba(244,114,182,0.12), transparent 30%),
+                  var(--bg);
+      color: var(--text);
+      font-family: 'Inter', 'IBM Plex Sans', sans-serif;
+      min-height: 100vh;
+      padding: 28px;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
+    h1 { margin: 0; font-size: 28px; letter-spacing: -0.02em; }
+    .sub { color: var(--muted); margin-top: 6px; font-size: 14px; }
+    .layout { max-width: 1280px; margin: 0 auto 40px auto; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: var(--shadow);
+      margin-top: 18px;
+      transition: background 0.3s ease, border 0.3s ease;
+    }
+    .header { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; justify-content: space-between; }
+    .header-left { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .header-right { display: flex; align-items: center; gap: 8px; }
+    .pill {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 7px 12px; border-radius: 999px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      color: var(--text); font-size: 12px; letter-spacing: 0.02em;
+      transition: background 0.3s ease, border 0.3s ease, color 0.3s ease;
+    }
+    .pill .pill-emoji { font-size: 14px; }
+    .pill.accent { color: var(--accent); border-color: rgba(94,234,212,0.3); }
+    .pill.type { font-weight: 700; text-transform: uppercase; }
+    .pill.class { color: var(--class); border-color: rgba(245,158,11,0.35); }
+    .pill.function { color: var(--function); border-color: rgba(34,211,238,0.35); }
+    .pill.excellent { color: var(--excellent); border-color: rgba(16,185,129,0.35); font-weight: 700; }
+    .pill.good { color: var(--good); border-color: rgba(34,211,238,0.35); font-weight: 700; }
+    .pill.fair { color: var(--fair); border-color: rgba(245,158,11,0.35); font-weight: 700; }
+    .pill.poor { color: var(--poor); border-color: rgba(249,115,22,0.35); font-weight: 700; }
+    .pill.critical { color: var(--critical); border-color: rgba(239,68,68,0.35); font-weight: 700; }
+    .score-card {
+      margin-top: 28px;
+      padding: 28px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.04);
+      background: linear-gradient(135deg, rgba(96,165,250,0.08), rgba(13,23,45,0.9));
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px;
+    }
+    [data-theme='light'] .score-card {
+      background: linear-gradient(135deg, rgba(37,99,235,0.08), rgba(255,255,255,0.95));
+      border-color: rgba(15,23,42,0.08);
+    }
+    .score-main { flex: 1 1 240px; }
+    .score-label { text-transform: uppercase; font-size: 12px; letter-spacing: 0.2em; color: var(--muted); }
+    .score-value { display: flex; align-items: baseline; gap: 18px; margin-top: 12px; }
+    .score-number { font-size: 56px; font-weight: 700; letter-spacing: -0.04em; }
+    .score-grade { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; text-transform: uppercase; }
+    .score-grade.excellent { color: var(--excellent); }
+    .score-grade.good { color: var(--good); }
+    .score-grade.fair { color: var(--fair); }
+    .score-grade.poor { color: var(--poor); }
+    .score-grade.critical { color: var(--critical); }
+    .score-emoji { font-size: 20px; }
+    .score-description { margin-top: 8px; color: var(--muted); font-size: 14px; max-width: 420px; }
+    .score-metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 16px; flex: 2 1 320px; }
+    .metric {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    [data-theme='light'] .metric { background: rgba(15,23,42,0.02); }
+    .metric-label { font-size: 12px; text-transform: uppercase; letter-spacing: 0.16em; color: var(--muted); }
+    .metric-value { font-size: 20px; font-weight: 600; }
+    .overview-text {
+      margin-top: 18px;
+      padding: 14px 18px;
+      border-radius: 14px;
+      background: rgba(255,255,255,0.03);
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(360px, 1fr)); gap: 14px; margin-top: 14px; }
+    .side { background: var(--panel); border: 1px solid var(--border); border-radius: 12px; padding: 12px; transition: background 0.3s ease, border 0.3s ease; }
+    .path { font-family: 'IBM Plex Mono', monospace; color: var(--muted); font-size: 12px; margin-bottom: 6px; word-break: break-all; }
+    .code { background: var(--code-bg); border: 1px solid var(--border); border-radius: 12px; padding: 12px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--text); overflow: auto; max-height: 260px; }
+    [data-theme='light'] .code { color: #111827; }
+    .row { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .btn { background: linear-gradient(120deg, var(--accent), var(--accent-2)); color: #0b1021; border: none; padding: 9px 12px; border-radius: 10px; cursor: pointer; font-weight: 700; box-shadow: 0 12px 28px rgba(96,165,250,0.35); transition: transform 0.1s ease; }
+    .btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--text); }
+    .toggle { display: inline-flex; align-items: center; gap: 8px; padding: 8px 12px; border-radius: 999px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); color: var(--text); cursor: pointer; font-weight: 600; }
+    .toggle-icon { font-size: 14px; }
+    .btn:active { transform: translateY(1px); }
+    .muted { color: var(--muted); font-size: 12px; }
+    .modal { position: fixed; inset: 0; background: rgba(5,7,15,0.7); display: none; align-items: center; justify-content: center; padding: 28px; z-index: 20; }
+    .modal.active { display: flex; }
+    .modal-content { background: var(--panel); border: 1px solid var(--border); border-radius: 14px; max-width: 1100px; width: 100%; max-height: 92vh; overflow: auto; padding: 18px; box-shadow: var(--shadow); transition: background 0.3s ease, border 0.3s ease; }
+    .modal h3 { margin: 0 0 10px 0; }
+    .close { float: right; cursor: pointer; color: var(--muted); font-size: 18px; }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <div class="header">
+      <div class="header-left">
+        <h1>DryScan Duplicate Report</h1>
+        <span class="pill accent">Threshold 85%</span>
+        <span class="pill good"><span class="pill-emoji">👍</span>8.1% · Good</span>
+      </div>
+      <div class="header-right">
+        <button class="toggle" id="theme-toggle"><span class="toggle-icon">🌙</span><span id="theme-label">Dark</span></button>
+      </div>
+    </div>
+    <section class="score-card">
+      <div class="score-main">
+        <div class="score-label">Duplication Score</div>
+        <div class="score-value">
+          <span class="score-number">8.1%</span>
+          <span class="score-grade good">
+            <span class="score-emoji">👍</span>
+            Good
+          </span>
+        </div>
+        <p class="score-description">Weighted duplicate lines across the entire codebase. Lower numbers indicate healthier reuse.</p>
+      </div>
+      <div class="score-metrics">
+        <div class="metric">
+          <span class="metric-label">Total Lines</span>
+          <span class="metric-value">4,145</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Duplicate Lines</span>
+          <span class="metric-value">334</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Duplicate Groups</span>
+          <span class="metric-value">15</span>
+        </div>
+        <div class="metric">
+          <span class="metric-label">Similarity Threshold</span>
+          <span class="metric-value">85%</span>
+        </div>
+      </div>
+    </section>
+
+    <div id="groups"></div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-content">
+      <span class="close" id="modal-close">✕</span>
+      <h3 id="modal-title"></h3>
+      <pre class="code"><code id="modal-code" class="language-plaintext hljs line-numbers"></code></pre>
+    </div>
+  </div>
+
+  <script id="dup-data" type="application/json">[{"id":"function:ApplicationConfiguration.configure:33-37::function:ApplicationConfiguration.configure:41-45","similarity":1.0000000000000002,"shortId":"dazytNTZwRbZ7bi1gKGJ4i","exclusionString":"function|ApplicationConfiguration.configure(arity:0)|ApplicationConfiguration.configure(arity:0)","left":{"id":"function:ApplicationConfiguration.configure:33-37","name":"ApplicationConfiguration.configure","filePath":"src/main/java/com/example/grouperapi/config/ApplicationConfiguration.java","startLine":33,"endLine":37,"code":"\n                    protected void configure() {\n                        using(new PostCommentsListToPostCount()).map(source.getComments(),\n                                destination.getCommentCount());\n                    }","unitType":"function"},"right":{"id":"function:ApplicationConfiguration.configure:41-45","name":"ApplicationConfiguration.configure","filePath":"src/main/java/com/example/grouperapi/config/ApplicationConfiguration.java","startLine":41,"endLine":45,"code":"\n                    protected void configure() {\n                        using(new PostCommentsListToPostCount()).map(source.getComments(),\n                                destination.getCommentCount());\n                    }","unitType":"function"}},{"id":"function:GroupService.createGroup:57-63::function:GroupService.createGroup:65-72","similarity":0.9645318064707358,"shortId":"q1zEKhgF4Y2CYJheJmM6Yj","exclusionString":"function|GroupService.createGroup(arity:2)|GroupService.createGroup(arity:3)","left":{"id":"function:GroupService.createGroup:57-63","name":"GroupService.createGroup","filePath":"src/main/java/com/example/grouperapi/service/GroupService.java","startLine":57,"endLine":63,"code":"private void createGroup(String name, String iconUrl) {\n        GroupEntity entity = new GroupEntity();\n        entity.setName(name);\n        entity.setPosts(new ArrayList<>());\n        entity.setIconUrl(iconUrl);\n        groupRepository.save(entity);\n    }","unitType":"function"},"right":{"id":"function:GroupService.createGroup:65-72","name":"GroupService.createGroup","filePath":"src/main/java/com/example/grouperapi/service/GroupService.java","startLine":65,"endLine":72,"code":"private void createGroup(String name, String iconUrl, String description) {\n        GroupEntity entity = new GroupEntity();\n        entity.setName(name);\n        entity.setPosts(new ArrayList<>());\n        entity.setIconUrl(iconUrl);\n        entity.setDescription(description);\n        groupRepository.save(entity);\n    }","unitType":"function"}},{"id":"block:GroupService.createGroup:57-63::block:GroupService.createGroup:65-72","similarity":0.963564866559809,"shortId":"fBQsBqeWLu2jaxc3MqEMzm","exclusionString":"block|bd220e0278d5e855c5f1ed695c412af76ba8d491|c4466e529211f3d8afa9f7a67979ceb03484fd2e","left":{"id":"block:GroupService.createGroup:57-63","name":"GroupService.createGroup","filePath":"src/main/java/com/example/grouperapi/service/GroupService.java","startLine":57,"endLine":63,"code":"{\n        GroupEntity entity = new GroupEntity();\n        entity.setName(name);\n        entity.setPosts(new ArrayList<>());\n        entity.setIconUrl(iconUrl);\n        groupRepository.save(entity);\n    }","unitType":"block"},"right":{"id":"block:GroupService.createGroup:65-72","name":"GroupService.createGroup","filePath":"src/main/java/com/example/grouperapi/service/GroupService.java","startLine":65,"endLine":72,"code":"{\n        GroupEntity entity = new GroupEntity();\n        entity.setName(name);\n        entity.setPosts(new ArrayList<>());\n        entity.setIconUrl(iconUrl);\n        entity.setDescription(description);\n        groupRepository.save(entity);\n    }","unitType":"block"}},{"id":"block:CommentService.deleteAll:199-204::block:CommentService.delete:214-219","similarity":0.9634982846181459,"shortId":"tLB8iytmo6VkMsKvakU5Ja","exclusionString":"block|5db77a179b96d81f4d325555b29ce5264e65ca8e|5db77a179b96d81f4d325555b29ce5264e65ca8e","left":{"id":"block:CommentService.deleteAll:199-204","name":"CommentService.deleteAll","filePath":"src/main/java/com/example/grouperapi/service/CommentService.java","startLine":199,"endLine":204,"code":"{\n            Image image = comment.getImage();\n            cloudinaryService.deleteImage(image);\n            comment.setImage(null);\n            imageRepository.delete(image);\n        }","unitType":"block"},"right":{"id":"block:CommentService.delete:214-219","name":"CommentService.delete","filePath":"src/main/java/com/example/grouperapi/service/CommentService.java","startLine":214,"endLine":219,"code":"{\n            Image image = comment.getImage();\n            cloudinaryService.deleteImage(image);\n            comment.setImage(null);\n            imageRepository.delete(image);\n        }","unitType":"block"}},{"id":"function:GroupService.refreshCache:88-91::function:UserService.refreshCache:132-135","similarity":0.9515003933217806,"shortId":"8ozMABN4vbT7ezpQ6f3gZz","exclusionString":"function|GroupService.refreshCache(arity:0)|UserService.refreshCache(arity:0)","left":{"id":"function:GroupService.refreshCache:88-91","name":"GroupService.refreshCache","filePath":"src/main/java/com/example/grouperapi/service/GroupService.java","startLine":88,"endLine":91,"code":"\n    \n    public void refreshCache() {\n    }","unitType":"function"},"right":{"id":"function:UserService.refreshCache:132-135","name":"UserService.refreshCache","filePath":"src/main/java/com/example/grouperapi/service/UserService.java","startLine":132,"endLine":135,"code":"\n    \n    public void refreshCache() {\n    }","unitType":"function"}},{"id":"function:UserController.roles:160-164::function:UserController.roles:166-169","similarity":0.9321199127361541,"shortId":"8twAkGz7CNXYefXGH3HkRx","exclusionString":"function|UserController.roles(arity:1)|UserController.roles(arity:1)","left":{"id":"function:UserController.roles:160-164","name":"UserController.roles","filePath":"src/main/java/com/example/grouperapi/controller/UserController.java","startLine":160,"endLine":164,"code":"\n    \")\n    public ResponseEntity<RolesDTO> roles(Principal principal) {\n        return ResponseEntity.ok(userService.getRolesArr(principal.getName()));\n    }","unitType":"function"},"right":{"id":"function:UserController.roles:166-169","name":"UserController.roles","filePath":"src/main/java/com/example/grouperapi/controller/UserController.java","startLine":166,"endLine":169,"code":"\n    public ResponseEntity<RolesDTO> roles( String username) {\n        return ResponseEntity.ok(userService.getRolesArr(username));\n    }","unitType":"function"}},{"id":"function:ChatService.createUserUser1Chat:43-58::function:ChatService.createUserAdminChat:72-87","similarity":0.9231856809465327,"shortId":"qgbuBYqXcCoz8FWqYPxpEG","exclusionString":"function|ChatService.createUserAdminChat(arity:0)|ChatService.createUserUser1Chat(arity:0)","left":{"id":"function:ChatService.createUserUser1Chat:43-58","name":"ChatService.createUserUser1Chat","filePath":"src/main/java/com/example/grouperapi/service/ChatService.java","startLine":43,"endLine":58,"code":"private void createUserUser1Chat() {\n        List<UserEntity> users = new ArrayList<>();\n        UserEntity user = userService.getUserByUsername(\"user\");\n        UserEntity user1 = userService.getUserByUsername(\"user1\");\n        users.add(user);\n        users.add(user1);\n\n        Chat chat = new Chat();\n        chat.setUsers(users);\n        chat.setName(null);\n\n        List<Message> messages = seedMessagesUserUser1(user, user1, chat);\n        chat.setMessages(messages);\n        chat.setLastMessageTime(messages.get(messages.size() - 1).getTimeSent());\n        chatRepository.save(chat);\n    }","unitType":"function"},"right":{"id":"function:ChatService.createUserAdminChat:72-87","name":"ChatService.createUserAdminChat","filePath":"src/main/java/com/example/grouperapi/service/ChatService.java","startLine":72,"endLine":87,"code":"private void createUserAdminChat() {\n        List<UserEntity> users = new ArrayList<>();\n        UserEntity admin = userService.getUserByUsername(\"admin\");\n        UserEntity user = userService.getUserByUsername(\"user\");\n        users.add(admin);\n        users.add(user);\n\n        Chat chat = new Chat();\n        chat.setUsers(users);\n        chat.setName(null);\n\n        List<Message> messages = seedMessagesUserAdmin(user, admin, chat);\n        chat.setMessages(messages);\n        chat.setLastMessageTime(messages.get(messages.size() - 1).getTimeSent());\n        chatRepository.save(chat);\n    }","unitType":"function"}},{"id":"block:ChatService.createUserUser1Chat:43-58::block:ChatService.createUserAdminChat:72-87","similarity":0.9157390292503242,"shortId":"ohoaK6fN5pQpx4xYPiM22z","exclusionString":"block|2934337c7811a5d43ae05690b657393a59be92ff|98f8c892da281fab303ff3e66959de6c2a11977f","left":{"id":"block:ChatService.createUserUser1Chat:43-58","name":"ChatService.createUserUser1Chat","filePath":"src/main/java/com/example/grouperapi/service/ChatService.java","startLine":43,"endLine":58,"code":"{\n        List<UserEntity> users = new ArrayList<>();\n        UserEntity user = userService.getUserByUsername(\"user\");\n        UserEntity user1 = userService.getUserByUsername(\"user1\");\n        users.add(user);\n        users.add(user1);\n\n        Chat chat = new Chat();\n        chat.setUsers(users);\n        chat.setName(null);\n\n        List<Message> messages = seedMessagesUserUser1(user, user1, chat);\n        chat.setMessages(messages);\n        chat.setLastMessageTime(messages.get(messages.size() - 1).getTimeSent());\n        chatRepository.save(chat);\n    }","unitType":"block"},"right":{"id":"block:ChatService.createUserAdminChat:72-87","name":"ChatService.createUserAdminChat","filePath":"src/main/java/com/example/grouperapi/service/ChatService.java","startLine":72,"endLine":87,"code":"{\n        List<UserEntity> users = new ArrayList<>();\n        UserEntity admin = userService.getUserByUsername(\"admin\");\n        UserEntity user = userService.getUserByUsername(\"user\");\n        users.add(admin);\n        users.add(user);\n\n        Chat chat = new Chat();\n        chat.setUsers(users);\n        chat.setName(null);\n\n        List<Message> messages = seedMessagesUserAdmin(user, admin, chat);\n        chat.setMessages(messages);\n        chat.setLastMessageTime(messages.get(messages.size() - 1).getTimeSent());\n        chatRepository.save(chat);\n    }","unitType":"block"}},{"id":"block:CommentService.addComment:28-43::block:CommentService.addComment:43-58","similarity":0.9089785819729445,"shortId":"idmM8Uie8peUg5LLg7WFLQ","exclusionString":"block|8d314f8ee010180f4b9beb64461786ca05dea228|be40fc033f4883e4dde4850c0022bff37d9d483c","left":{"id":"block:CommentService.addComment:28-43","name":"CommentService.addComment","filePath":"src/main/java/com/example/grouperapi/service/CommentService.java","startLine":28,"endLine":43,"code":"{\n            PostComment postComment = new PostComment();\n            UserEntity author = userService.getUserByUsername(username);\n            postComment.setAuthor(author);\n            postComment.setContents(addCommentDTO.getContent());\n            if (!(addCommentDTO.getImage() == null)) {\n                Image image = cloudinaryService.postImage(addCommentDTO.getImage());\n                postComment.setImage(image);\n                imageRepository.save(image);\n            }\n            postComment.setCreated(Instant.now());\n            Post post = postRepository.findById(addCommentDTO.getId()).orElseThrow(() -> new RuntimeException(\"No post with id in the database\"));\n            commentRepository.save(postComment);\n            postComment.setPost(post);\n            postRepository.save(post);\n        }","unitType":"block"},"right":{"id":"block:CommentService.addComment:43-58","name":"CommentService.addComment","filePath":"src/main/java/com/example/grouperapi/service/CommentService.java","startLine":43,"endLine":58,"code":"{\n            Reply reply = new Reply();\n            UserEntity author = userService.getUserByUsername(username);\n            reply.setAuthor(author);\n            reply.setContents(addCommentDTO.getContent());\n            if (addCommentDTO.getImage() != null) {\n                Image image = cloudinaryService.postImage(addCommentDTO.getImage());\n                reply.setImage(image);\n                imageRepository.save(image);\n            }\n            reply.setCreated(Instant.now());\n            Comment comment = commentRepository.findById(addCommentDTO.getId()).orElseThrow(() -> new RuntimeException(\"invalid comment id\"));\n            comment.getReplies().add(reply);\n            commentRepository.save(reply);\n            commentRepository.save(comment);\n        }","unitType":"block"}},{"id":"block:CommentController.delete:42-50::block:PostController.deletePost:68-77","similarity":0.890488311501256,"shortId":"p3uotuRAPAAdb7errjBGLe","exclusionString":"block|7f283b66e4c38f365fccecfa1ee16ffbcc17b764|de8441334c10ef8085cc56748ea456ea6d9b55f8","left":{"id":"block:CommentController.delete:42-50","name":"CommentController.delete","filePath":"src/main/java/com/example/grouperapi/controller/CommentController.java","startLine":42,"endLine":50,"code":"{\n        if (principal.getName().equals(commentService.getAuthorName(id))\n                || userService.isAdmin(principal.getName())) {\n            commentService.delete(id);\n            return ResponseEntity.ok().build();\n        } else {\n            return ResponseEntity.status(403).build();\n        }\n    }","unitType":"block"},"right":{"id":"block:PostController.deletePost:68-77","name":"PostController.deletePost","filePath":"src/main/java/com/example/grouperapi/controller/PostController.java","startLine":68,"endLine":77,"code":"{\n        // if the principal is the author of the post or an admin\n        if (principal.getName().equals(postService.getAuthor(id))\n                || userService.isAdmin(principal.getName())) {\n            postService.delete(id);\n            return ResponseEntity.ok().build();\n        } else {\n            return ResponseEntity.status(403).build();\n        }\n    }","unitType":"block"}},{"id":"block:CommentService.deleteAll:197-210::block:CommentService.delete:214-219","similarity":0.8733040882160491,"shortId":"wbWx6jkh3otyej2FxNsQwc","exclusionString":"block|5db77a179b96d81f4d325555b29ce5264e65ca8e|dad026872c9ccfd75e3f2240e56e5c7ff3935507","left":{"id":"block:CommentService.deleteAll:197-210","name":"CommentService.deleteAll","filePath":"src/main/java/com/example/grouperapi/service/CommentService.java","startLine":197,"endLine":210,"code":"{\n        comment.setAuthor(null);\n        if (comment.getImage() != null) {\n            Image image = comment.getImage();\n            cloudinaryService.deleteImage(image);\n            comment.setImage(null);\n            imageRepository.delete(image);\n        }\n        for (Reply reply : comment.getReplies()) {\n            deleteAll(reply);\n        }\n\n        commentRepository.delete(comment);\n    }","unitType":"block"},"right":{"id":"block:CommentService.delete:214-219","name":"CommentService.delete","filePath":"src/main/java/com/example/grouperapi/service/CommentService.java","startLine":214,"endLine":219,"code":"{\n            Image image = comment.getImage();\n            cloudinaryService.deleteImage(image);\n            comment.setImage(null);\n            imageRepository.delete(image);\n        }","unitType":"block"}},{"id":"function:CommentService.deleteAll:197-210::function:CommentService.delete:211-223","similarity":0.8685938246253249,"shortId":"jRc97bbw964Lfxiw79SLJJ","exclusionString":"function|CommentService.delete(arity:1)|CommentService.deleteAll(arity:1)","left":{"id":"function:CommentService.deleteAll:197-210","name":"CommentService.deleteAll","filePath":"src/main/java/com/example/grouperapi/service/CommentService.java","startLine":197,"endLine":210,"code":"public void deleteAll(Comment comment) throws IOException {\n        comment.setAuthor(null);\n        if (comment.getImage() != null) {\n            Image image = comment.getImage();\n            cloudinaryService.deleteImage(image);\n            comment.setImage(null);\n            imageRepository.delete(image);\n        }\n        for (Reply reply : comment.getReplies()) {\n            deleteAll(reply);\n        }\n\n        commentRepository.delete(comment);\n    }","unitType":"function"},"right":{"id":"function:CommentService.delete:211-223","name":"CommentService.delete","filePath":"src/main/java/com/example/grouperapi/service/CommentService.java","startLine":211,"endLine":223,"code":"\n    public void delete(Long id) throws IOException {\n        Comment comment = commentRepository.findById(id).orElseThrow(() -> new RuntimeException(\"no such comment\"));\n        if (comment.getImage() != null) {\n            Image image = comment.getImage();\n            cloudinaryService.deleteImage(image);\n            comment.setImage(null);\n            imageRepository.delete(image);\n        }\n        comment.setAuthor(null);\n        comment.setContents(\"[DELETED]\");\n        commentRepository.save(comment);\n    }","unitType":"function"}},{"id":"class:CommentService:17-224::class:PostService:30-314","similarity":0.8567482392456963,"shortId":"49dasj8C49dqZ7oM86tUBj","exclusionString":"class|src/main/java/com/example/grouperapi/service/CommentService.java|src/main/java/com/example/grouperapi/service/PostService.java","left":{"id":"class:CommentService:17-224","name":"CommentService","filePath":"src/main/java/com/example/grouperapi/service/CommentService.java","startLine":17,"endLine":224,"code":"\n\npublic class CommentService {\n    private final CommentRepository commentRepository;\n    private final ImageRepository imageRepository;\n    private final PostRepository postRepository;\n    private final UserService userService;\n    private final CloudinaryService cloudinaryService;\n\n\n    public void addComment(AddCommentDTO addCommentDTO, String username) throws IOException  { }\n\n    \n    public void seedComments()  { }\n\n    private void commentsLinux()  { }\n\n    private void postComment2()  { }\n\n    void postComment1()  { }\n\n    private PostComment createTopComment(Long postId, String username, String contents)  { }\n\n    private Reply createReply(String username, String contents)  { }\n\n    public String getAuthorName(Long id)  { }\n\n    public void deleteAll(Comment comment) throws IOException  { }\n    \n    public void delete(Long id) throws IOException  { }\n}","unitType":"class"},"right":{"id":"class:PostService:30-314","name":"PostService","filePath":"src/main/java/com/example/grouperapi/service/PostService.java","startLine":30,"endLine":314,"code":"\n\n\npublic class PostService {\n\n    private PostRepository postRepository;\n    private CommentService commentService;\n    private UserService userService;\n    private ImageRepository imageRepository;\n    private GroupService groupService;\n    private CloudinaryService cloudinaryService;\n    private ModelMapper mapper;\n\n    public void seedPosts()  { }\n\n    public FullPostInfoDTO getFullPostInfo(Long id)  { }\n\n\n    \n    public Long createPost(PostCreationDTO dto, String username) throws IOException  { }\n\n\n    private void createPost(String authorUsername, String groupName, String title, String content)  { }\n\n    public Post getById(Long id)  { }\n\n    public String getAuthor(Long id)  { }\n\n    \n    public void delete(Long id) throws IOException  { }\n}","unitType":"class"}},{"id":"function:UserController.pfp:137-143::function:UserController.pfp:145-150","similarity":0.8541637595505267,"shortId":"gUh7A64VYywCcWD4ze8cd4","exclusionString":"function|UserController.pfp(arity:1)|UserController.pfp(arity:2)","left":{"id":"function:UserController.pfp:137-143","name":"UserController.pfp","filePath":"src/main/java/com/example/grouperapi/controller/UserController.java","startLine":137,"endLine":143,"code":"\n    \")\n    public ResponseEntity pfp( MultipartFile pfp,\n            Principal principal) throws IOException {\n        userService.changePfp(pfp, principal.getName());\n        return ResponseEntity.ok().build();\n    }","unitType":"function"},"right":{"id":"function:UserController.pfp:145-150","name":"UserController.pfp","filePath":"src/main/java/com/example/grouperapi/controller/UserController.java","startLine":145,"endLine":150,"code":"\n    \")\n    public ResponseEntity pfp(Principal principal) throws IOException {\n        userService.removePfp(principal.getName());\n        return ResponseEntity.ok().build();\n    }","unitType":"function"}},{"id":"function:CommentService.delete:211-223::function:PostService.delete:301-313","similarity":0.8519873575974827,"shortId":"16AXt9FkiUJbUdsnYNv6us","exclusionString":"function|CommentService.delete(arity:1)|PostService.delete(arity:1)","left":{"id":"function:CommentService.delete:211-223","name":"CommentService.delete","filePath":"src/main/java/com/example/grouperapi/service/CommentService.java","startLine":211,"endLine":223,"code":"\n    public void delete(Long id) throws IOException {\n        Comment comment = commentRepository.findById(id).orElseThrow(() -> new RuntimeException(\"no such comment\"));\n        if (comment.getImage() != null) {\n            Image image = comment.getImage();\n            cloudinaryService.deleteImage(image);\n            comment.setImage(null);\n            imageRepository.delete(image);\n        }\n        comment.setAuthor(null);\n        comment.setContents(\"[DELETED]\");\n        commentRepository.save(comment);\n    }","unitType":"function"},"right":{"id":"function:PostService.delete:301-313","name":"PostService.delete","filePath":"src/main/java/com/example/grouperapi/service/PostService.java","startLine":301,"endLine":313,"code":"\n    public void delete(Long id) throws IOException {\n        Post post = postRepository.getById(id);\n        List<PostComment> comments = post.getComments();\n        for (PostComment comment : comments) {\n            commentService.deleteAll(comment);\n        }\n        if (post.getImage() != null) {\n            cloudinaryService.deleteImage(post.getImage());\n            imageRepository.delete(post.getImage());\n        }\n        postRepository.delete(post);\n    }","unitType":"function"}}]</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/java.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/highlightjs-line-numbers.js/2.8.0/highlightjs-line-numbers.min.js"></script>
+  <script type="module">
+    const dataEl = document.getElementById('dup-data');
+    const modal = document.getElementById('modal');
+    const modalTitle = document.getElementById('modal-title');
+    const modalCode = document.getElementById('modal-code');
+    const themeToggle = document.getElementById('theme-toggle');
+    const themeLabel = document.getElementById('theme-label');
+    const themeLink = document.getElementById('hljs-theme');
+    const groups = JSON.parse(dataEl.textContent || '[]');
+    const toast = (msg) => alert(msg);
+
+    const applyTheme = (next) => {
+      document.documentElement.setAttribute('data-theme', next);
+      localStorage.setItem('dryscan-theme', next);
+      themeLabel.textContent = next === 'light' ? 'Light' : 'Dark';
+      themeToggle.querySelector('.toggle-icon').textContent = next === 'light' ? '☀️' : '🌙';
+      themeLink.setAttribute('href', next === 'light'
+        ? 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css'
+        : 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css');
+    };
+    const savedTheme = localStorage.getItem('dryscan-theme');
+    if (savedTheme === 'light' || savedTheme === 'dark') applyTheme(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+      applyTheme(current === 'light' ? 'dark' : 'light');
+      hljs.highlightAll();
+      document.querySelectorAll('code.hljs').forEach(el => hljs.lineNumbersBlock(el));
+    });
+
+    document.getElementById('modal-close').addEventListener('click', () => modal.classList.remove('active'));
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.remove('active'); });
+
+    const typeClass = (unitType) => {
+      if (unitType === 'class') return 'class';
+      if (unitType === 'block') return 'block';
+      return 'function';
+    };
+
+    const languageClass = (filePath) => {
+      const ext = (filePath.split('.').pop() || '').toLowerCase();
+      if (ext === 'java') return 'language-java';
+      return 'language-plaintext';
+    };
+
+    const container = document.getElementById('groups');
+
+    const render = () => {
+      container.innerHTML = '';
+      groups.forEach((group, idx) => {
+        container.appendChild(renderGroup(group, idx));
+      });
+      hljs.highlightAll();
+      document.querySelectorAll('code.hljs').forEach(el => hljs.lineNumbersBlock(el));
+    };
+
+      const regenerateReport = async () => {
+        const res = await fetch('/api/regenerate', { method: 'POST' });
+        if (!res.ok) {
+          const msg = (await res.json().catch(() => ({}))).error || 'Failed to regenerate report';
+          toast(msg);
+          return;
+        }
+        // Refresh the page to pick up the new report
+        window.location.reload();
+      };
+
+    const renderGroup = (group, idx) => {
+      const card = document.createElement('div');
+      card.className = 'card';
+
+      const header = document.createElement('div');
+      header.className = 'row';
+      const title = document.createElement('div');
+      title.innerHTML = '<strong>Group ' + (idx + 1) + '</strong> · Similarity ' + (group.similarity * 100).toFixed(1) + '%';
+      header.appendChild(title);
+      header.appendChild(makePill(group.left.unitType));
+      if (group.shortId) {
+        const idTag = document.createElement('div');
+        idTag.className = 'muted';
+        idTag.textContent = 'ID ' + group.shortId;
+        header.appendChild(idTag);
+      }
+      card.appendChild(header);
+
+      const grid = document.createElement('div');
+      grid.className = 'grid';
+      grid.appendChild(renderSide(group.left, 'Left', group.similarity));
+      grid.appendChild(renderSide(group.right, 'Right', group.similarity));
+      card.appendChild(grid);
+
+      const footer = document.createElement('div');
+      footer.className = 'row';
+      if (group.exclusionString) {
+        const exclusionMeta = document.createElement('div');
+        exclusionMeta.className = 'muted';
+        exclusionMeta.textContent = 'Exclusion key: ' + group.exclusionString;
+        footer.appendChild(exclusionMeta);
+      }
+      card.appendChild(footer);
+      return card;
+    };
+
+    const renderSide = (side, label, similarity) => {
+      const wrap = document.createElement('div');
+      wrap.className = 'side';
+
+      const row = document.createElement('div');
+      row.className = 'row';
+      const title = document.createElement('div');
+      title.innerHTML = '<strong>' + label + '</strong> · ' + side.name;
+      row.appendChild(title);
+      // row.appendChild(makePill(side.unitType));
+      wrap.appendChild(row);
+
+      const path = document.createElement('div');
+      path.className = 'path';
+      path.textContent = side.filePath + ':' + side.startLine + '-' + side.endLine;
+      wrap.appendChild(path);
+
+      const codeWrap = document.createElement('pre');
+      codeWrap.className = 'code';
+      const codeEl = document.createElement('code');
+      codeEl.className = languageClass(side.filePath) + ' hljs line-numbers';
+      codeEl.textContent = side.code;
+      codeWrap.appendChild(codeEl);
+      wrap.appendChild(codeWrap);
+
+      const actions = document.createElement('div');
+      actions.className = 'row';
+      const btn = document.createElement('button');
+      btn.className = 'btn';
+      btn.textContent = 'View full file';
+      btn.dataset.action = 'view-file';
+      btn.dataset.path = side.filePath;
+      actions.appendChild(btn);
+      const meta = document.createElement('div');
+      meta.className = 'muted';
+      meta.textContent = 'Lines ' + side.startLine + '-' + side.endLine + ' · Similarity ' + (similarity * 100).toFixed(1) + '%';
+      actions.appendChild(meta);
+      wrap.appendChild(actions);
+
+      return wrap;
+    };
+
+    const makePill = (unitType) => {
+      const el = document.createElement('span');
+      el.className = 'pill type ' + typeClass(unitType);
+      el.textContent = unitType;
+      return el;
+    };
+
+    document.addEventListener('click', async (event) => {
+      const target = event.target;
+      if (target && target.dataset && target.dataset.action === 'view-file') {
+        const path = target.dataset.path;
+        try {
+          const res = await fetch('/api/file?path=' + encodeURIComponent(path));
+          if (!res.ok) {
+            modalTitle.textContent = 'Unable to load file';
+            modalCode.textContent = await res.text();
+            modalCode.className = 'language-plaintext hljs';
+            modal.classList.add('active');
+            return;
+          }
+          const data = await res.json();
+          modalTitle.textContent = data.path;
+          modalCode.textContent = data.content;
+          modalCode.className = languageClass(data.path) + ' hljs line-numbers';
+          modal.classList.add('active');
+          hljs.highlightElement(modalCode);
+          hljs.lineNumbersBlock(modalCode);
+        } catch (err) {
+          modalTitle.textContent = 'Network error';
+          modalCode.textContent = err?.message || 'Unable to fetch file content.';
+          modalCode.className = 'language-plaintext hljs';
+          modal.classList.add('active');
+        }
+      }
+    });
+
+
+    render();
+  </script>
+</body>
+</html>
+
