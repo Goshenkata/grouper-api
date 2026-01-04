@@ -20,6 +20,6 @@ jobs:
       - uses: Goshenkata/dryscan-action@v3
         with:
           huggingface-api-key: ${{ secrets.HUGGINGFACEHUB_API_KEY }}
-          threshold: 20
+          threshold: 5
           path: '.'
           github-token: ${{ secrets.GITHUB_TOKEN }}
