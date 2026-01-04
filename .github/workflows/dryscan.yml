@@ -11,11 +11,15 @@ jobs:
       pull-requests: write
     
     steps:
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v6
+        with:
+          node-version: 20
       - uses: actions/checkout@v4
       
-      - uses: Goshenkata/dryscan-action@v1
+      - uses: Goshenkata/dryscan-action@v3
         with:
-          google-api-key: ${{ secrets.GOOGLE_API_KEY }}
+          huggingface-api-key: ${{ secrets.HUGGINGFACEHUB_API_KEY }}
           threshold: 20
           path: '.'
           github-token: ${{ secrets.GITHUB_TOKEN }}
